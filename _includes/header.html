@@ -1,9 +1,28 @@
 <header class="site-header">
 
-	<div class="wrapper">
+	<div class="headerwrapper">
 	<a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
 	</div>
 	<div class="wrapper" id="site-description">
 	<p>{{ site.description | escape }}</p>
+	</div>
+
+	<div class="contact">
+      {%- if site.author %}
+        <ul class="contact-list">
+		  
+		  {% if site.author.github %}
+			<li><a class="u-github" href="{{ site.author.github }}">&ltGithub profile&gt</a></li>
+		  {% endif %}
+
+		  {% if site.author.twitter %}
+			<li><a class="u-twitter" href="{{ site.author.twitter }}">&ltTwitter&gt</a></li>
+		  {% endif %}
+          
+		  {% if site.author.email -%}
+            <li><a class="u-email" href="mailto:{{ site.author.email }}">&ltmailto:{{ site.author.email }}&gt</a></li>
+          {%- endif %}
+        </ul>
+      {%- endif %}
 	</div>
 </header>

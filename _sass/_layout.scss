@@ -2,8 +2,8 @@
  * Site header
  */
 .site-header {
-  border-top: 5px solid $border-color-03;
-  border-bottom: 1px solid $border-color-01;
+  border-top: 7px solid $color1;
+  border-bottom: 1px solid $color1_dark;
   min-height: $spacing-unit * 1.865;
   line-height: $base-line-height * $base-font-size * 2.25;
 
@@ -122,8 +122,7 @@
  * Site footer
  */
 .site-footer {
-  border-top: 1px solid $border-color-01;
-  padding: $spacing-unit 0;
+  padding: 5px 5px 5px 5px;
 }
 
 .footer-heading {
@@ -145,10 +144,6 @@
 .social-links {
   @include relative-font-size(0.9375);
   color: $brand-color;
-}
-
-.footer-col {
-  margin-bottom: $spacing-unit / 2;
 }
 
 .footer-col-1,
@@ -224,7 +219,7 @@
 
 .post-meta {
   font-size: $small-font-size;
-  color: $brand-color;
+  color: $text-color;
 }
 
 .post-link {

@@ -12,7 +12,7 @@ $color3:				#10ff00;
 $color3_dark:			#0b9d00;
 $color3_light:			#91ff89;
 
-$brand-color:           #999999 !default;
+$brand-color:           $color1;
 $brand-color-light:     lighten($brand-color, 5%) !default;
 $brand-color-dark:      darken($brand-color, 35%) !default;
 
@@ -22,7 +22,7 @@ $text-color:            #bbbbbb !default;
 $background-color:      #181818 !default;
 $code-background-color: #212121 !default;
 
-$link-base-color:       #79b8ff !default;
+$link-base-color:       $color1_light !default;
 $link-visited-color:    $link-base-color !default;
 $link-hover-color:      $text-color !default;
 

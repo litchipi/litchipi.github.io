@@ -6,7 +6,11 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "/"
 domain: "litchipi.github.io"
 url: "https://litchipi.github.io"
-author: "Litchi pi"
+author:
+    name: "Litchi pi"
+    email: "litchi.pi@protonmail.com"
+    github: "https://github.com/litchipi/"
+    twitter: "https://twitter.com/LitchiPi"
 twitter_username: LitchiPi
 github_username:  litchipi
 
@@ -16,7 +20,9 @@ plugins:
   - jekyll-feed
 
 exclude:
-    - _posts/2021-09-13-*
+    - _posts/2021-09-13-helloworld*
+    - _posts/2021-09-13-test*
+
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/

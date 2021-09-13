@@ -16,6 +16,10 @@ layout: base
       {%- for post in posts -%}
       <li>
         <span class="post-meta">{{ post.date | date: date_format }}</span>
+		{% if post.series %}
+		<!-- TODO	IMPLEMENT	Page containing all the post related to a serie --!>
+		<span class="post-meta-serie">(Article n°{{ post.serie_index }} of serie "<a href="#">{{ post.series }}</a>")</span>
+		{% endif %}
         <h3>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}

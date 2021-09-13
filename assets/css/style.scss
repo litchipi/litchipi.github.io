@@ -5,18 +5,63 @@
   "dark",
   "initialize";
 
-#site-description {
-	line-height: normal;
+.post-meta-serie {
+	margin-left: 50px;
+	a {
+		color: $color2;		//TODO	FIX doesn't work
+	}
 }
 
-#rss_sub {
-	color: darkorange;
+.footer-col a {
+	color: $color1_dark;
+}
+
+.author_name {
+	color: $color2;
+}
+
+.post-title {
+	color: $color1;
+	font-size: 30px;
+}
+
+.post-list a {
+	color: $color1;
+}
+
+.contact {
+	float: right;
+	line-height: normal;
+	margin-right: 20px;
+	margin-top: 7px;
+}
+
+.contact-list a{
+	color: $color1_dark;
+}
+
+.contact-list .p-name{
+	font-size: larger;
+	font-weight: bold;
+	color: $text-color;
+}
+
+.headerwrapper {
+	margin-top: 5px;
+	margin-left: 20px;
+}
+
+#site-description {
+	line-height: normal;
+	margin-top: 20px;
+	float: left;
+	margin-left: 20px;
 }
 
 
 /*		SIDE BAR		*/
 .sidenav {
-  width: 160px; /* Set the width of the sidebar */
+  max-width: 250px; /* Set the width of the sidebar */
   z-index: 1; /* Stay on top */
   display: block;
   position: fixed;
@@ -26,6 +71,8 @@
   background-color: #1D1F1D; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
   padding: 20px 20px 20px 20px;
+  border: 1px solid $color2; //_light;
+  text-shadow: unset;
 }
 
 /* The navigation menu links */
@@ -33,17 +80,17 @@
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 18px;
-  color: #818181;
+  color: #808080;
   display: block;
 }
 
 .sidenav .current_post {
-	color: $color1_dark;
+	color: $color2;
 }
 
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
-  color: $color1;
+  color: $color2_light;
 }
 
 /* Style page content */

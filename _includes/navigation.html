@@ -6,7 +6,7 @@
 
 	{% assign site_posts = site.posts | sort:"serie_index" %}
 	{% if page.series %}
-	<p><h3> "{{ page.series }}" </h3>
+	<p><h3> {{ page.series }} </h3>
 		{%- for post in site_posts %}
 			{% if post.series == page.series %}
 				<a
