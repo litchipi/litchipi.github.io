@@ -1,1 +1,28 @@
+title: Blog of Litchi Pi 2
+email: litchi.pi@protonmail.com
+description: >- # this means to ignore newlines until "baseurl:"
+    The blog of a young dumb Rust and Python programmer, interested in
+    a lot of different subjects and willing to talk about his discoveries.
+baseurl: "/"
+domain: "litchipi.github.io"
+url: "https://litchipi.github.io"
+author: "Litchi pi"
+twitter_username: LitchiPi
+github_username:  litchipi
+
+# Build settings
 theme: jekyll-theme-hacker
+plugins:
+  - jekyll-feed
+
+# exclude:
+#   - .sass-cache/
+#   - .jekyll-cache/
+#   - gemfiles/
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules/
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
