@@ -28,9 +28,6 @@
   padding: 20px 20px 20px 20px;
 }
 
-.sidenav h3 {
-}
-
 /* The navigation menu links */
 .sidenav a {
   padding: 6px 8px 6px 16px;
@@ -40,9 +37,13 @@
   display: block;
 }
 
+.sidenav .current_post {
+	color: $color1_dark;
+}
+
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
-  color: #FF0090;
+  color: $color1;
 }
 
 /* Style page content */

@@ -1,5 +1,17 @@
 @charset "utf-8";
 
+$color1:				#ff0090;
+$color1_dark:			#9d0059;
+$color1_light:			#ff89cc;
+
+$color2:				#00ffef;
+$color2_dark:			#009d93;
+$color2_light:			#89fff7;
+
+$color3:				#10ff00;
+$color3_dark:			#0b9d00;
+$color3_light:			#91ff89;
+
 $brand-color:           #999999 !default;
 $brand-color-light:     lighten($brand-color, 5%) !default;
 $brand-color-dark:      darken($brand-color, 35%) !default;

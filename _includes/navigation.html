@@ -4,46 +4,55 @@
 		<a href="/">Index</a>
 	</div>
 
-	{%- if post.post_serie -%}
-	<p><h3> Serie of posts </h3>
-		{%- for post in post.post_serie -%}
-		<a href="{{ post.url }}">{{ post.title }}</a>
-		{%- endfor -%}
+	{% assign site_posts = site.posts | sort:"serie_index" %}
+	{% if page.series %}
+	<p><h3> "{{ page.series }}" </h3>
+		{%- for post in site_posts %}
+			{% if post.series == page.series %}
+				<a
+					{% if post.url == page.url %}
+						class="current_post"
+					{% endif %}
+					href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
+			{% endif %}
+		{% endfor %}
 	</p>
 	{%- endif -%}
 
 
 	<div class="catnav">
-	{% assign maxRelated = 2 %}
+	{% assign maxRelated = 4 %}
 	{% assign maxRelatedCounter = 0 %}
 	{% assign writeHeader = true %}
 
 	{% for post in site.posts %}
 		{% for category in post.categories %}
 
-		  {% if post.url != page.url %}
-			{% if page.categories contains category %}
+		{% if post.url == page.url %}
+			{% continue %}
+		{% endif %}
+		{% if post.series == page.series %}
+			{% continue %}
+		{% endif %}
+		{% if page.categories contains category %}
 
-			  {% if writeHeader == true %}
-				<p><h3> Same category </h3>
-			    {% assign writeHeader = false %}
-			  {% endif %}
-
-			  {{ maxRelatedCounter }} and {{ maxRelated }}
-			  {% if maxRelatedCounter >= maxRelated %}
-				BREAAAK
-			  {% endif %}
-			  <a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
-
-			  {% assign maxRelatedCounter = maxRelatedCounter | plus: 1 %}
-			  {% if maxRelatedCounter >= maxRelated %}
-				{% break %}
-			  {% endif %}
-
-			{% endif %}
+		  {% if writeHeader == true %}
+			<p><h3> Same category </h3>
+			{% assign writeHeader = false %}
 		  {% endif %}
 
+		  <a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
+		  {% assign maxRelatedCounter = maxRelatedCounter | plus: 1 %}
+		  {% if maxRelatedCounter >= maxRelated %}
+			  {% break %}
+		  {% endif %}
+		{% endif %}
+
 		{% endfor %}
+
+		{% if maxRelatedCounter >= maxRelated %}
+			{% break %}
+		{% endif %}
 	{% endfor %}
 
 	</div>
