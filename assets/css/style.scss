@@ -1,7 +1,6 @@
 ---
 ---
 
-@import "dark";
 @import
   "dark",
   "initialize";
@@ -9,3 +8,51 @@
 #site-description {
 	line-height: normal;
 }
+
+#rss_sub {
+	color: darkorange;
+}
+
+
+/*		SIDE BAR		*/
+.sidenav {
+  width: 160px; /* Set the width of the sidebar */
+  z-index: 1; /* Stay on top */
+  display: block;
+  position: fixed;
+  top: 50%;
+  transform: translate(5%, -50%);
+  left: 0;
+  background-color: #1D1F1D; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding: 20px 20px 20px 20px;
+}
+
+.sidenav h3 {
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #FF0090;
+}
+
+/* Style page content */
+.main {
+  margin-left: 160px; /* Same as the width of the sidebar */
+  padding: 0px 10px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+} 
