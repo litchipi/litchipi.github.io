@@ -14,3 +14,12 @@
 	.sidenav {padding-top: 15px;}
 	.sidenav a {font-size: 18px;}
 }
+
+.site-title {
+	font-weight: bolder;
+}
+
+.site-title:hover {
+	text-decoration: none;
+	color: $color2;
+}

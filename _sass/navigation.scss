@@ -16,15 +16,19 @@
 
 /* The navigation menu links */
 .sidenav a {
-  padding: 6px 8px 6px 16px;
+  padding: 6px 8px 6px 8px;
   text-decoration: none;
   font-size: 18px;
-  color: #808080;
+  color: $color1;
   display: block;
 }
 
-.sidenav .current_post {
+.sidenav #current_post {
 	color: $color2;
+}
+
+.sidenav .post_same_serie {
+	color: $color2_dark;
 }
 
 /* When you mouse over the navigation links, change their color */
@@ -32,6 +36,15 @@
   color: $color2_light;
 }
 
+.sidenav:hover {
+	border-width: 4px;
+	margin-left: -3px;
+}
+
+.inpost-nav:hover {
+	border-width: 4px;
+	margin-right: -3px;
+}
 .inpost-nav {
 	border: 1px solid $color1;
 	max-width: $sidenav-width;
@@ -45,6 +58,11 @@
 	z-index: 1;
 	right: 0;
 	top: 50%;
+
+	a:hover {
+		color: $color2_light;
+		text-decoration: none;
+	}
 
 	ul {
 		list-style-type: none;
@@ -60,7 +78,7 @@
 	}
 	
 	li li li a {
-		color: $color2_light;
+		color: $color3;
 	}
 
 	li li li li a {
