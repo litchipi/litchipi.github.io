@@ -21,25 +21,23 @@
 		margin: unset;
 		margin-top: 30px;
 		margin-left: 5px;
-		margin-bottom: 5px;
+		margin-bottom: 10px;
 	}
 
 	h3 {
 		color: $color3;
-		font-size: 22px;
+		font-size: 24px;
 		margin: unset;
 		margin-left: 15px;
 		margin-bottom: 5px;
-		text-decoration: underline solid $color2_dark;
-		text-underline-offset: 4px;
 	}
 
 	h4 {
 		color: $text-color;
-		font-size: 17px;
+		font-size: 20px;
 		margin: unset;
 		margin-left: 25px;
-		margin-bottom: 5px;
+		margin-bottom: 10px;
 		text-decoration: underline solid $color1_dark;
 		text-underline-offset: 5px;
 	}
@@ -48,6 +46,7 @@
 		margin: unset;
 		margin-top: 10px;
 		margin-bottom: 10px;
+		margin-left: 15px;
 		font-size: 17px;
 	}
 
@@ -55,12 +54,20 @@
 		font-size: 15px;
 		color: $color2_light;
 		border-left-color: $color2_dark;
+		margin-left: 15px;
+		padding-left: unset;
 	}
 
-	pre{
+
+	.highlight {
+		background: darken($color3, 65%);
+		border-color: darken($color3, 15%);
 		border-radius: 5px;
-		border-color: darken($color1_dark, 15%);
 		margin-top: 10px;
+
+		code {
+			background-color: unset;
+		}
 	}
 
 	strong {
