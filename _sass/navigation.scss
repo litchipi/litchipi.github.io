@@ -1,16 +1,17 @@
 .sidenav {
   border: 1px solid $color1;
-  max-width: 250px; /* Set the width of the sidebar */
   z-index: 1; /* Stay on top */
   display: block;
   position: fixed;
   top: 50%;
-  transform: translate(5%, -50%);
+  transform: translate($sidenav-sideoffset, -50%);
   left: 0;
   background-color: $background-color;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding: 20px 20px 20px 20px;
   text-shadow: unset;
+  max-width: $sidenav-width;
+  width: max-content;
 }
 
 /* The navigation menu links */
@@ -33,14 +34,14 @@
 
 .inpost-nav {
 	border: 1px solid $color1;
-	max-width: 250px; /* Set the width of the sidebar */
+	max-width: sidenav-width;
+	width: max-content;
 	display: block;
 	background-color: $background-color;
 	overflow-x: hidden; /* Disable horizontal scroll */
-	width: max-content;
 	padding: 20px 20px 20px 10px;
 	position: fixed;
-	transform: translate(-5%, -50%);
+	transform: translate(-$sidenav-sideoffset, -50%);
 	z-index: 1;
 	right: 0;
 	top: 50%;

@@ -15,6 +15,9 @@ $table-text-align: left !default;
 
 // Width of the content area
 $content-width:    1200px !default;
+$sidenav-width:	   250px;
+$sidenav-sideoffset: 10px;
+$content-shrink-threshold: calc(#{$content-width} + 2*(#{$sidenav-width} + #{$sidenav-sideoffset}));
 
 $on-palm:          600px !default;
 $on-laptop:        800px !default;
