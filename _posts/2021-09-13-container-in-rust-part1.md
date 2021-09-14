@@ -27,7 +27,16 @@ So we basically tell a container "*Hey, execute that thing inside a isolated box
 manager create a box that will look like a system in which the software can execute
 (properly configured), and execute the software.
 
-## Portability
+## Objectives
+
+Containerisation solves issues met by programmers as the internet of microservices, the cloud, as
+well as the diversification of the computer forms (desktop, laptop, smartphone, smartwatch,
+smart\<insert name here\> ...), running on more diverse operating systems.
+
+Linux is everywhere and runs the digital world, but a Linux embedded on a car sensor isn't the same
+as one on a desktop, a web server or a super computer.
+
+### Portability
 Portability is the ability of a software to be executed on various execution environment without
 any compatibility issue, containers are one of the solutions to allow that kind of behaviour and
 is used to ship software without needing to modify the system to install it.
@@ -46,7 +55,7 @@ Okay, so it's a way to make a software run without the compatibility hassle with
 execution environment. This is especially usefull to be able to develop a service and ship it to
 different servers, laptops or even embedded devices without all the problems it raises.
 
-## Security
+### Isolation
 But wait there's more to it, containerized applications have an isolated execution
 environment from the underlying operating system, in the same philosophy as a virtual machine.
 The difference between a container and a virtual machine is explained on the
@@ -60,8 +69,19 @@ factors, including the implementation, to avoid container evasion (the same way 
 avoid virtual machine evasion), a great post about it is
 [Understanding Docker container escapes][understand-docker-container-escape].
 
+## Naive representation of containerisation
+![Do not trust this image](/assets/images/container_in_rust_part1/system_virtualmachine_container.png)
+Okay this representation is false for a lot of reasons, but intuitively this is the different
+ways for a system to achieve the *portability* and *isolation* features.
+In reality, the CPU / SoC hardware have features to ease virtualization, but also the software
+stack under and inside the Linux kernel, but I won't dive into these details here.
 
+However it is notable that a bunch of Linux libraries and kernel services allows
+to use the virtualization features, and we will use them extensively during the implementation.
 
+Different containers use differents containerisation type, LXC for example is able to perform
+[OS-level virtualization][os-level-virtualization-wikipedia], whereas Docker will achieve an
+application-level virtualization.
 
 # Common containers
 
@@ -99,3 +119,4 @@ about the variants LXD, LXCFS and other related tools.
 [docker-website]: https://www.docker.com/
 [docker-documentation]: https://docs.docker.com/
 [lxc-website]: https://linuxcontainers.org/lxc/introduction/
+[os-level-virtualization-wikipedia]: https://en.wikipedia.org/wiki/OS-level_virtualization
