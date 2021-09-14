@@ -34,7 +34,7 @@
 
 .inpost-nav {
 	border: 1px solid $color1;
-	max-width: sidenav-width;
+	max-width: $sidenav-width;
 	width: max-content;
 	display: block;
 	background-color: $background-color;

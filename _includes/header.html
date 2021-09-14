@@ -12,15 +12,15 @@
         <ul class="contact-list">
 		  
 		  {% if site.author.github %}
-			<li><a class="u-github" href="{{ site.author.github }}">&ltGithub profile&gt</a></li>
+			<li><a class="u-github" href="{{ site.author.github }}">&lt Github profile &gt</a></li>
 		  {% endif %}
 
 		  {% if site.author.twitter %}
-			<li><a class="u-twitter" href="{{ site.author.twitter }}">&ltTwitter&gt</a></li>
+			<li><a class="u-twitter" href="{{ site.author.twitter }}">&lt Twitter &gt</a></li>
 		  {% endif %}
           
 		  {% if site.author.email -%}
-            <li><a class="u-email" href="mailto:{{ site.author.email }}">&ltmailto:{{ site.author.email }}&gt</a></li>
+            <li><a class="u-email" href="mailto:{{ site.author.email }}">&lt mailto: {{ site.author.email }} &gt</a></li>
           {%- endif %}
         </ul>
       {%- endif %}

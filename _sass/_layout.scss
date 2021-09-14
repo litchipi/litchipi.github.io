@@ -1,6 +1,10 @@
 /**
  * Site header
  */
+footer {
+	border-bottom: 10px solid $color1;
+}
+
 .site-header {
   border-top: 7px solid $color1;
   border-bottom: 1px solid $color1_dark;
