@@ -1,25 +1,23 @@
 ---
 permalink: /404.html
-layout: default
 ---
 
-<style type="text/css" media="screen">
-  .container {
-    margin: 10px auto;
-    max-width: 600px;
-    text-align: center;
-  }
-  h1 {
-    margin: 30px 0;
-    font-size: 4em;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-</style>
-
-<div class="container">
-  <h1>404</h1>
-
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
-</div>
+<html>
+	<head>
+		{%- include head.html -%}
+	</head>
+	<header class="site-header">
+		<div class="headerwrapper">
+		<a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
+		</div>
+	</header>
+	<body>
+		<div class="wrapper">
+			<h1>Error 404</h1>
+			Page not found :-(
+			<p>
+				<a href="/">Return to index</a>
+			</p>
+		</div>
+	</body>
+</html>
