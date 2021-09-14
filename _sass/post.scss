@@ -25,7 +25,7 @@
 	}
 
 	h3 {
-		color: $color2_light;
+		color: $color3;
 		font-size: 22px;
 		margin: unset;
 		margin-left: 15px;
@@ -56,10 +56,15 @@
 		color: $color2_light;
 		border-left-color: $color2_dark;
 	}
+
 	pre{
 		border-radius: 5px;
 		border-color: darken($color1_dark, 15%);
 		margin-top: 10px;
+	}
+
+	strong {
+		color: $color3;
 	}
 }
 
@@ -71,6 +76,6 @@
 }
 
 .author_name {
-	color: $color2;
+	color: $color3;
 }
 
