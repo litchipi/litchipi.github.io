@@ -5,6 +5,13 @@
 }
 
 .post-content {
+	a {
+		color: $color1_light;
+		text-decoration: underline;
+		text-decoration-color: $color1;
+		text-underline-offset: 3px;
+	}
+
 	h1 {
 		border-top: 3px solid $color1_dark;
 		color: $color1;
