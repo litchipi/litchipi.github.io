@@ -1,0 +1,32 @@
+.contact {
+	float: right;
+	line-height: normal;
+	margin-right: 20px;
+	margin-top: 7px;
+}
+
+.contact-list a{
+	color: $color1;
+}
+
+.contact-list .p-name{
+	font-size: larger;
+	font-weight: bold;
+	color: $text-color;
+}
+
+.headerwrapper {
+	margin-top: 5px;
+	margin-left: 20px;
+}
+
+#site-description {
+	line-height: normal;
+	margin-top: 20px;
+	float: left;
+	margin-left: 20px;
+}
+
+.footer-col a {
+	color: $color1_dark;
+}

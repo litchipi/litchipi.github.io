@@ -1,0 +1,55 @@
+.post-title {
+	color: $color1;
+	font-size: 40px;
+	font-weight: bolder;
+}
+
+.post-content {
+	h1 {
+		border-top: 3px solid $color1_dark;
+		color: $color1;
+		font-size: 35px;
+		margin: unset;
+		margin-top: 20px;
+		padding-top: 12px;
+		margin-bottom: 10px;
+	}
+	h2 {
+		color: $color2;
+		font-size: 25px;
+		margin: unset;
+		margin-top: 30px;
+		margin-left: 5px;
+		margin-bottom: 5px;
+	}
+	h3 {
+		font-size: 21px;
+		margin: unset;
+		margin-left: 25px;
+		margin-bottom: 10px;
+	}
+	p {
+		margin: unset;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		font-size: 17px;
+	}
+
+	blockquote {
+		font-size: 15px;
+		color: $color2_light;
+		border-left-color: $color2_dark;
+	}
+}
+
+.post-meta-serie {
+	margin-left: 50px;
+	a {
+		color: $color2;		//TODO	FIX doesn't work
+	}
+}
+
+.author_name {
+	color: $color2;
+}
+
