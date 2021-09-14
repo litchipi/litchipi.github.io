@@ -73,6 +73,10 @@
 	strong {
 		color: $color3;
 	}
+
+	em {
+		color: lighten($color3, 10%);
+	}
 }
 
 .post-meta-serie {
