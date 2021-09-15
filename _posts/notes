@@ -66,3 +66,16 @@ CONTAINER IN RUST:
 
 	9 - Clean if anything happens
 		https://docs.rs/nix/0.22.1/nix/unistd/fn.close.html
+
+	10 - Configure namespaces
+		What is namespaces ?
+			https://lwn.net/Articles/531114/
+
+		Unshare:
+			https://man7.org/linux/man-pages/man2/unshare.2.html
+
+		Sending messages through sockets:
+			https://docs.rs/nix/0.22.1/nix/sys/socket/fn.send.html
+
+		Configure child & parent namespaces:
+			TODO: Diagram showing the flow
