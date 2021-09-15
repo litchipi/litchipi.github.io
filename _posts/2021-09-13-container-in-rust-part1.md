@@ -112,6 +112,13 @@ needing another Linux Kernel.
 Visit [the linuxcontainers.org website][lxc-website] for more informations, including informations
 about the variants LXD, LXCFS and other related tools.
 
+# About this tutorial
+
+In this tutorial, I assume the reader already know how to create simple programs in Rust.
+I won't exaplain anything related to the Rust langage, but I will link as much as possible
+notions of the Rust langage to [The Book][rust-the-book] to allow anyone to read an
+unknown / forgotten subject if needed.
+
 [docker-website-whatisdocker]: https://www.docker.com/resources/what-container
 [linux-containers-tutorial]: https://blog.lizzie.io/linux-containers-in-500-loc.html
 [understand-docker-container-escape]: https://blog.trailofbits.com/2019/07/19/understanding-docker-container-escapes/
@@ -120,3 +127,4 @@ about the variants LXD, LXCFS and other related tools.
 [docker-documentation]: https://docs.docker.com/
 [lxc-website]: https://linuxcontainers.org/lxc/introduction/
 [os-level-virtualization-wikipedia]: https://en.wikipedia.org/wiki/OS-level_virtualization
+[rust-the-book]: https://doc.rust-lang.org/book/

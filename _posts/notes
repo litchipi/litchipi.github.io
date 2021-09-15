@@ -1,0 +1,68 @@
+CONTAINER IN RUST:
+
+	Each step is a branch in the github repository, and can be executed without any problem
+	-> Link the branch of the step into the article main body
+
+	Le plus dur, c'est de comprendre l'utilisation de la librairie "nix" en Rust, et essayer
+	d'adapter les instructions depuis un paradygme de programmation en C vers celui en Rust.
+
+	1 - Parsing args
+		Using 'structopt' because easier (link to doc)
+		Using example modified to build the struct
+		Use "///" on top of struct elements to add as helpers inside the --help message
+
+		https://docs.rs/structopt/0.3.23/structopt/
+
+	2 - Setup logging
+
+		https://docs.rs/log/0.4.14/log/
+		https://docs.rs/env_logger/0.9.0/env_logger/index.html
+		https://docs.rs/env_logger/0.9.0/env_logger/struct.Builder.html
+
+	3 - Setup the errors handling
+		Clean errors handling through Errcodes
+		Implement the "Format" trait for easy printing and debugging
+		Unified errors for the whole project
+
+		https://doc.rust-lang.org/std/fmt/trait.Display.html
+	
+	4 - Validate arguments
+		Check that the file paths exist for "mount", return errors if not
+		"command" gets the whole commandline to be executed
+
+	5 - Check Linux version
+
+	6 - Generate a hostname
+		https://docs.rs/rand/0.8.4/rand/seq/trait.SliceRandom.html
+	
+	7 - Generate the sockets pairs
+		https://docs.rs/nix/0.22.1/nix/sys/socket/fn.socketpair.html
+
+		Address:
+			https://docs.rs/nix/0.22.1/nix/sys/socket/enum.AddressFamily.html
+			https://man7.org/linux/man-pages/man7/unix.7.html
+
+		Socket type:
+			https://docs.rs/nix/0.22.1/nix/sys/socket/enum.SockType.html
+
+		Protocol:
+			None car va être défini automatiquement
+
+		flags:
+			https://docs.rs/nix/0.22.1/src/nix/sys/socket/mod.rs.html#170-199
+	
+	8 - Clone the process
+		https://doc.servo.org/nix/sched/fn.clone.html
+
+		Callback:
+			Closure avec les arguments qu'on veut
+			https://doc.rust-lang.org/rust-by-example/fn/closures.html
+
+		Clone flags:
+			https://doc.servo.org/src/nix/sched.rs.html#18-44
+
+		Signal:
+			None, pas besoin
+
+	9 - Clean if anything happens
+		https://docs.rs/nix/0.22.1/nix/unistd/fn.close.html
