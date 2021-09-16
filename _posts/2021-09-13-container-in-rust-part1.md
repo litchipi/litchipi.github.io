@@ -119,6 +119,19 @@ I won't exaplain anything related to the Rust langage, but I will link as much a
 notions of the Rust langage to [The Book][rust-the-book] to allow anyone to read an
 unknown / forgotten subject if needed.
 
+It is mainly a way for me to learn about Linux security measures, virtualization features,
+how containerisation works, and the abilitiy to translate a program written with C paradygms
+with Rust, interacting with the Linux kernel.
+Fortunately for me, there's a lot of documentation out there, videos, articles,
+[the tutorial in which this series of post is based][linux-containers-tutorial], etc ... 
+
+**Keep in mind that I am learning while creating this project, I may make mistakes and in case
+of doubts, please check the differents souces I give or the Internet to double check what I say**.
+
+I advice any reader to just go back and forth with the [original tutorial][linux-containers-tutorial]
+to get precisions, an other explanation, and a bunch of links to the outer world
+(check the footnotes).
+
 [docker-website-whatisdocker]: https://www.docker.com/resources/what-container
 [linux-containers-tutorial]: https://blog.lizzie.io/linux-containers-in-500-loc.html
 [understand-docker-container-escape]: https://blog.trailofbits.com/2019/07/19/understanding-docker-container-escapes/
