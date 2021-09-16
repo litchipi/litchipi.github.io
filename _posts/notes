@@ -64,12 +64,16 @@ CONTAINER IN RUST:
 		Signal:
 			None, pas besoin
 
-	9 - Clean if anything happens
-		https://docs.rs/nix/0.22.1/nix/unistd/fn.close.html
+		Clean if anything happens
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.close.html
 
-	10 - Configure namespaces
+	9 - Configure namespaces
 		What is namespaces ?
 			https://lwn.net/Articles/531114/
+
+			Expliquer que c'est une isolation, que le kernel effectue des actions
+			sur tous les namespaces et qu'on veut particulièrement pas ce genre de
+			choses, pour isoler notre child process
 
 		Unshare:
 			https://man7.org/linux/man-pages/man2/unshare.2.html
@@ -79,3 +83,119 @@ CONTAINER IN RUST:
 
 		Configure child & parent namespaces:
 			TODO: Diagram showing the flow
+
+		Setgroups, setresgid, setresuid:
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.setgroups.html
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.setresgid.html
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.setresuid.html
+
+	10 - Set up capabilities
+		Divise le pouvoir d'un administrateur pour déléguer de façon sécurisée et contrôllée
+		des privilèges à des exécutables, utilisateurs ou processus.
+
+		https://www.youtube.com/watch?v=WYC6DHzWzFQ
+
+		Pour voir les capabilities d'un processus:
+			cat /proc/$pid/task/$thread_id/status | grep Cap
+
+		Les différents sets de capabilities:
+			- Effective:
+				Vérifiées pour chaque action privilégiée demandée
+
+			- Permitted:
+				Capabilities qui sont autorisée à l'activation
+				Qui ne le sont pas, mais qui peuvent l'être
+
+			- Inheritable:
+				Lors du chargement d'un exécutable, passe ce set, filtré par les permissions
+				du fichier exécutable, en tant que permitted.
+
+			- Ambient:
+				Lors du chargement d'un exécutable, automatiquement passe en permitted ces
+				capabilities chez le child.
+				Chaque capabilities dans ce set doit être dans les Inheritable & Permitted.
+
+			- Bounding:
+				Limite tous les sets de capabilities aux capabilities activées dans ce set
+
+		Drop:
+			Fonction d'audit du système / kernel, permet d'avoir des informations sensibles
+			sur le kernel
+			CAP_AUDIT_CONTROL,
+			CAP_AUDIT_READ,			// not even namespaced
+			CAP_AUDIT_WRITE,
+
+			Permet d'éteindre le système (suspend), not namespaced
+			CAP_BLOCK_SUSPEND
+
+			Permet d'effectuer une attaque brute-force pour lire n'importe quel fichier
+			du système depuis l'intérieur d'un container
+			https://blog.lizzie.io/linux-containers-in-500-loc.html#fn.15
+			CAP_DAC_READ_SEARCH
+
+			Permet de modifier un exécutable ayant le bit SUID, sans enlever celui-ci.
+			Dangereuse pratique de sécurité
+			Exemple escalation: https://pentestlab.blog/2017/09/25/suid-executables/
+			CAP_FSETID
+
+			Permet de "locker" de la mémoire RAM
+			Pourrait être utilisée pour faire du deni de service
+			CAP_IPC_LOCK,
+
+			Permet de modifier des paramètres de sécurité de AppArmor, SELinux et SMACK
+			Pas namespaced, permetterait à un container de décider de ses propres mesures de
+			sécurités sur le host.
+			CAP_MAC_ADMIN,
+			CAP_MAC_OVERRIDE,
+
+			Permet de créer des fichiers correspondant à du hardware.
+			Une application contained pourrait recréer un fichier pour le disque dur et avoir
+			un accès total à celui-ci depuis l'intérieur du container
+			https://blog.lizzie.io/linux-containers-in-500-loc.html#fn.18
+			CAP_MKNOD
+
+			Permet de déterminer les capabilities d'un exécutable
+			Ne peut pas décider des capabilities que le process contained n'a pas, mais peut
+			tout de même affecter la sécurité du host car le host a accès à ce fichier.
+			CAP_SETFCAP
+
+			Permet de lire le syslog du kernel, et d'effectuer des actions destructrices dessus
+			Expose les addresses du kernel, ce qui peut être utiliser pour contourner l'ASLR.
+			Example: https://github.com/bcoles/kasld
+				Sur le premier example, on voit:
+				```
+					[.] checking /var/log/syslog for free_reserved_area() info ...
+					leaked address: ffffffff820b2000
+					kernel base (likely): ffffffff82000000
+					kernel base (likely): ffffffff81000000
+				```
+			CAP_SYSLOG
+
+			Permet beaucoup trop de choses.
+			Choses parmis lesquelles on aurait besoin, mais qui ne vaut pas la complexité.
+			CAP_SYS_ADMIN
+
+			Permet de rebooter le système et de charger un nouveau kernel.
+			CAP_SYS_BOOT
+
+			Permet de loader des modules kernel
+			CAP_SYS_MODULE
+
+			Permet de définir la priorité (nice) des process.
+			Cela permetterait un deni de service sur le système.
+			CAP_SYS_NICE
+
+			Permet d'avoir un accès complet aux IO du système
+			CAP_SYS_RAWIO
+
+			Permet de contourner les limites du kernel en terme de ressources
+			CAP_SYS_RESOURCE
+
+			N'est pas namespaced, donc permet de modifier l'heure du système host
+			CAP_SYS_TIME
+
+			Permet d'interférer avec le réveil système, peut bloquer "suspend"
+			CAP_WAKE_ALARM
+
+			Les capabilities retenues peuvent être vues à la partie 
+				"Retained Capabilities" du tutoriel original avec leurs explications concrètes.
