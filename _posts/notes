@@ -199,3 +199,13 @@ CONTAINER IN RUST:
 
 			Les capabilities retenues peuvent être vues à la partie 
 				"Retained Capabilities" du tutoriel original avec leurs explications concrètes.
+	
+	11 - Disable some syscalls
+		Link to articles about seccomp
+
+		Disable with comparator:
+			If bit "S_ISUID" equals to 1, refuse the syscall
+
+		TODO:
+			- Add list of syscalls refused, and why they are refused
+			- Add list of syscalls allowed, and why we didn't refused them
