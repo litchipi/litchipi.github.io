@@ -8,6 +8,7 @@ tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 2
 ---
+
 # Getting started
 
 So I guess you've heard that Rust's mascot is Ferris, the little cutie crab.

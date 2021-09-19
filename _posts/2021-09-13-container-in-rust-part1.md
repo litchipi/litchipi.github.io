@@ -24,7 +24,7 @@ A container is an isolated execution environment providing an abstraction betwee
 executed and the underlying operating system. It can be seen as a software virtualisation process.
 
 So we basically tell a container "*Hey, execute that thing inside a isolated box*", the
-manager create a box that will look like a system in which the software can execute
+manager create a box that will look like a system in which the container can execute
 (properly configured), and execute the software.
 
 ## Objectives

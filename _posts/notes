@@ -67,7 +67,15 @@ CONTAINER IN RUST:
 		Clean if anything happens
 			https://docs.rs/nix/0.22.1/nix/unistd/fn.close.html
 
-	9 - Configure namespaces
+	9 - Set hostname
+		TODO
+
+	10 - Perform chroot
+		Mount / Umount / Pivot root
+		Bind mounts:
+			https://docs.docker.com/storage/bind-mounts/
+
+	11 - Configure namespaces
 		What is namespaces ?
 			https://lwn.net/Articles/531114/
 
@@ -89,7 +97,7 @@ CONTAINER IN RUST:
 			https://docs.rs/nix/0.22.1/nix/unistd/fn.setresgid.html
 			https://docs.rs/nix/0.22.1/nix/unistd/fn.setresuid.html
 
-	10 - Set up capabilities
+	12 - Set up capabilities
 		Divise le pouvoir d'un administrateur pour déléguer de façon sécurisée et contrôllée
 		des privilèges à des exécutables, utilisateurs ou processus.
 
@@ -200,7 +208,7 @@ CONTAINER IN RUST:
 			Les capabilities retenues peuvent être vues à la partie 
 				"Retained Capabilities" du tutoriel original avec leurs explications concrètes.
 	
-	11 - Disable some syscalls
+	13 - Disable some syscalls
 		Link to articles about seccomp
 
 		Disable with comparator:
@@ -209,3 +217,72 @@ CONTAINER IN RUST:
 		TODO:
 			- Add list of syscalls refused, and why they are refused
 			- Add list of syscalls allowed, and why we didn't refused them
+	
+	14 - Restrict resources
+		On ne veut pas que le processus dans le container s'accapare toutes les resources du système
+		Alors on utilise des mesures du kernel pour les limiter.
+
+		Utilisation des control groups (cgroups):
+			https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt
+	
+	15 - Perform execve syscall
+		TODO
+	
+	16 - Test
+		The executable to run has to be statically linked, no other libraries or dependencies
+	
+	17 - Add parameter to allow mount some directories inside the container
+		To allow /bin/sh to be run
+	
+	18 - Final tests & thoughts
+		Run bash shell
+		test "ip addr" command to see how we don't got any network interface
+		etc ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+REAL STEPS:
+	Post #1:
+		Theory
+		Explanation
+		Introduction
+
+	Post #2:
+		1 - Parsing
+		2 - Setup logging
+		3 - Error handling
+		4 - Argument validation
+
+	Post #3:
+		5 - Skeletton
+		6 - Check Linux Version
+		7 - Generate socket pair
+		8 - Clone the process
+	
+	Post #4:
+		9 - Generate hostname & set up new hostname
+		10 - Perform mounts modifications
+		11 - Set up namespaces
+	
+	Post #5:
+		12 - Linux Capabilities
+		13 - Syscalls restrictions
+		14 - Ressources restrictions
+	
+	Post #6:
+		15 - Execve syscall
+		16 - Test with statically linked C program
+		17 - Adding parameter to mount /bin & /lib inside container
+		18 - Final tests
