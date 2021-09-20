@@ -260,16 +260,16 @@ REAL STEPS:
 		Introduction
 
 	Post #2:
-		1 - Parsing
-		2 - Setup logging
-		3 - Error handling
-		4 - Argument validation
+		1 - Parsing					OK
+		2 - Setup logging			OK
+		3 - Error handling			OK
+		4 - Argument validation		OK
 
 	Post #3:
-		5 - Skeletton
-		6 - Check Linux Version
-		7 - Generate socket pair
-		8 - Clone the process
+		5 - Skeletton				OK
+		6 - Check Linux Version		OK
+		7 - Generate socket pair	OK
+		8 - Clone the process		OK
 	
 	Post #4:
 		9 - Generate hostname & set up new hostname
