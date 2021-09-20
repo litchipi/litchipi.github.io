@@ -1,8 +1,7 @@
 ---
 layout: post
-title:  "What is a container ?"
-date:   2021-09-12 17:34:00 +0200
-modified_date: 2021-09-14 12:00:00 +0200
+title:  "Introduction to containers"
+date:   2021-09-20 10:42:34 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -18,14 +17,23 @@ First of all, to understand how we're going to build our container,
 let's figure out what is a container and why we need it,
 we'll examine then few examples of containers commonly used.
 
-# Overview
+# What is a container ?
 
+## Overview
 A container is an isolated execution environment providing an abstraction between a software to be
 executed and the underlying operating system. It can be seen as a software virtualisation process.
 
 So we basically tell a container "*Hey, execute that thing inside a isolated box*", the
 manager create a box that will look like a system in which the container can execute
 (properly configured), and execute the software.
+
+### Usages
+Containerisation is used a lot of servers, as it allows great flexibility and reliability
+for DevOps engineers. Also if a software crashes, takes 100% of its ressources available,
+or even gets compromised by a hacker, it wont hurt the whole system and all the other
+services who are running on it.
+
+Note that servers use extensively virtual machines too.
 
 ## Objectives
 
@@ -82,6 +90,20 @@ to use the virtualization features, and we will use them extensively during the 
 Different containers use differents containerisation type, LXC for example is able to perform
 [OS-level virtualization][os-level-virtualization-wikipedia], whereas Docker will achieve an
 application-level virtualization.
+
+## Container = Isolated software
+What we mean by "software isolation", is the set of methods to allow a software to be executed
+inside the system, without allowing it to alter that system.
+So we want to create rules to forbid this software to access to files it's not permitted to,
+to use system features it's not allowed to, to modify the configuration of the system, to
+block or alter the performances, etc ...
+
+This can be done by a lot of different ways, but more generally it's about implementing security
+measures around a software, strong enough to make this software totally blind about the underlying
+system.
+
+So a container is just an application isolated from the system by a set of security measures.
+
 
 # Common containers
 
