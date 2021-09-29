@@ -16,11 +16,12 @@ Every programmer is different and some of you may go  directly into Linux syscal
 to create an isolated box and so on ...
 I prefer to always create a clean ground on which lay off my implementations, which
 I find is much more practical to read/understand later on, and it's always a good thing
-to practice clean implementations.
+to practice clean implementations. \\
+That will also provide bonus tips and tools about topics that may interest some less experiences
+Rust users, like **argument parsing**, **errors handling**, **logging**, etc ...
 
-For the sake of this tutorial, that will also provide bonus tips and tools about topics
-that may interest some less experiences Rust users, like **argument parsing**, **errors handling**,
-**logging**, etc ...
+I will assume here that you already have `rustc` and `cargo` installed, if you don't, please
+follow the instructions on [the Book](https://doc.rust-lang.org/book/ch01-01-installation.html)
 
 ## Create the project
 
@@ -31,28 +32,19 @@ Well, let's put Ferris in a container ! :D
 ![Wanna eat Ferris ?](/assets/images/container_in_rust_part2/crabcan.png){: width="250" }
 {: refdef}
 
-I will assume here that you already have `rustc` and `cargo` installed, if you don't, please
-follow the instructions on [the Book](https://doc.rust-lang.org/book/ch01-01-installation.html)
-
-### Cargo new
 We'll create a Rust binary project called **Crabcan**, and the objective will be to separate the
 different parts of the projects as distincly as possible to allow us to search in the code,
 tweak it and understand it again after months of pause.
 
-Run the command `cargo new --bin crabcan` to create the project
-
-#### Cargo.toml
+Run the command `cargo new --bin crabcan` to create the project. \\
 This will generate a `Cargo.toml` file in which we can describe our project, add dependencies and
 tweak configurations of the rust compiler, a handy file to avoid having to avoid having to
 create `rustc` commands by hand in a Makefile.
-
 You can change the author name, e-mail and version of your project here, but we wont add any
 dependencies yet.
 
-#### src/main.rs
 In the folder `src/` you will put, well, all your sources.
 For now there's only a `main.rs` file with a `Hello World!` code inside.
-
 
 # Parse the arguments
 Ok let's dive directly into our project. First of all let's get the arguments from the command line.
