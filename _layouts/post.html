@@ -31,3 +31,35 @@ layout: base
 <div class="post-content">
 {{ content }}
 </div>
+
+{% if page.series %}
+<div class="serie_post_prec_next">
+	{%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+
+	{%- assign prec = page.serie_index | minus: 1 -%}
+	{%- assign next = page.serie_index | plus: 1 -%}
+
+	{%- for post in site.posts -%}
+		{% if page.series == post.series %}
+			{% if prec == post.serie_index %}
+				{%- assign precedent_post = post %}
+			{% endif %}
+			{% if next == post.serie_index %}
+				{%- assign next_post = post %}
+			{% endif %}
+		{% endif %}
+	{%- endfor -%}
+
+	{% if precedent_post.title %}
+	<p>
+	Precedent post in this serie: <a href="{{ precedent_post.url }}" class="precedent_post">{{ precedent_post.title }}</a>
+	</p>
+	{% endif %}
+
+	{% if next_post.title %}
+	<p>
+	 Next post in this serie: <a href="{{ next_post.url }}" class="next_post">{{ next_post.title }}</a>
+	</p>
+	{% endif %}
+</div>
+{% endif %}
