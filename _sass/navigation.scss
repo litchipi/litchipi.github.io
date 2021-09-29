@@ -14,37 +14,69 @@
   width: max-content;
 }
 
+.sidenav:hover {
+	border-width: 4px;
+	margin-left: -3px;
+}
+
 /* The navigation menu links */
 .sidenav a {
-  padding: 6px 8px 6px 8px;
-  text-decoration: none;
-  font-size: 18px;
-  color: $color1;
-  display: block;
-}
+	padding: 6px 8px 6px 8px;
+	text-decoration: none;
+	font-size: 18px;
+	color: $color1;
+	display: block;
 
-.sidenav #current_post {
-	color: $color2;
-}
+	#current_post {
+		color: $color2;
+	}
 
-.sidenav .post_same_serie {
-	color: $color2_dark;
-}
+	.post_same_serie {
+		color: $color2_dark;
+	}
 
-/* When you mouse over the navigation links, change their color */
+}
 .sidenav a:hover {
   color: $color2_light;
 }
 
-.sidenav:hover {
-	border-width: 4px;
-	margin-left: -3px;
+.sitenav-mobile {
+	border: 5px solid $color1_dark;
+	border-left: unset;
+	border-right: unset;
+	padding: 5px 10px;
+	display: none;
+	font-size: 22px;
+
+	h1 {
+		font-size: 25px;
+		color: $color1;
+	}
+
+	a {
+	  padding: 0px 20px;
+	  text-decoration: none;
+	  color: $color1;
+	  display: block;
+	}
+
+	#current_post {
+		color: $color2_light;
+	}
+
+	.post_same_serie {
+		color: $color2;
+	}
+}
+.sitenav-mobile a:hover {
+  color: $color2_light;
 }
 
 .inpost-nav:hover {
 	border-width: 4px;
 	margin-right: -3px;
 }
+
 .inpost-nav {
 	border: 1px solid $color1;
 	max-width: $sidenav-width;
@@ -76,6 +108,54 @@
 	li li a {
 		color: $color2;
 	}
+
+	li li li a {
+		color: $color3;
+	}
+
+	li li li li a {
+		color: $text-color;
+	}
+}
+
+.inpost-nav-mobile {
+	margin-top: 30px;
+	margin-left: 10px;
+	border-left: 3px solid $color1_dark;
+	padding: 5px 10px;
+	display: none;
+	font-size: 22px;
+
+	a:hover {
+		color: $color2_light;
+		text-decoration: none;
+	}
+
+	h1 {
+		font-size: 30px;
+		color: $color1;
+	}
+
+	ul {
+		list-style-type: none;
+		margin-bottom: 10px;
+	}
+
+	li {
+		font-weight: bold;
+	}
+
+	a {
+		font-weight: initial;
+	}
+
+	li a {
+		color: $color1;
+	}
+
+	li li a {
+		color: $color2;
+	}
 	
 	li li li a {
 		color: $color3;
@@ -84,4 +164,9 @@
 	li li li li a {
 		color: $text-color;
 	}
+}
+
+#mobilenav-wrapper{
+	margin-bottom: 50px;
+	margin-top: 5px;
 }

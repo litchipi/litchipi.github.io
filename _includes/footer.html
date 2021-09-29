@@ -5,12 +5,24 @@
 
     <div class="footer-col-wrapper">
       <div class="footer-col">
-        <p class="feed-subscribe">
-          <a href="{{ 'feed.xml' | relative_url }}"><span id="rss_sub">Subscribe to RSS</span></a>
-        </p>
+		<div class="footer-contact">
+		  {%- if site.author %}
+			  {% if site.author.github %}
+				<a class="u-github" href="{{ site.author.github }}">&ltGithub profile&gt</a>
+			  {% endif %}
+
+			  {% if site.author.twitter %}
+				<a class="u-twitter" href="{{ site.author.twitter }}">&ltTwitter&gt</a>
+			  {% endif %}
+
+			  {% if site.author.email -%}
+				<a class="u-email" href="mailto:{{ site.author.email }}">&lt{{ site.author.email }}&gt</a>
+			  {%- endif %}
+		  {%- endif %}
+		</div>
+		<a class="feed-subscribe" href="{{ 'feed.xml' | relative_url }}"><span id="rss_sub">Subscribe to RSS</span></a>
       </div>
     </div>
-
   </div>
 
 </footer>
