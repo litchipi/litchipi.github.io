@@ -20,6 +20,11 @@
 	.post_same_serie {
 		color: $color2_dark;
 	}
+
+	.sidenav_seriename {
+		font-weight: bolder;
+		color: $color3;
+	}
 }
 
 .sidenav:hover {

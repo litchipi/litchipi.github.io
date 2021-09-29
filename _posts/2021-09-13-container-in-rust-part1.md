@@ -6,6 +6,7 @@ categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 1
+serie_url: /series/container_in_rust
 ---
 
 The objective of this series of blog post is to understand what is a container, how does it work
