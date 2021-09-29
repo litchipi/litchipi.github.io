@@ -7,6 +7,7 @@ categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 3
+serie_url: /series/container_in_rust
 ---
 
 # TODO 3
