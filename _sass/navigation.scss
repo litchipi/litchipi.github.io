@@ -8,10 +8,18 @@
   left: 0;
   background-color: $background-color;
   overflow-x: hidden; /* Disable horizontal scroll */
-  padding: 20px 20px 20px 20px;
+  padding: 10px 0px 10px 15px;
   text-shadow: unset;
   max-width: $sidenav-width;
-  width: max-content;
+  width: $sidenav-width;
+
+	#current_post {
+		color: $color2;
+	}
+
+	.post_same_serie {
+		color: $color2_dark;
+	}
 }
 
 .sidenav:hover {
@@ -27,15 +35,8 @@
 	color: $color1;
 	display: block;
 
-	#current_post {
-		color: $color2;
-	}
-
-	.post_same_serie {
-		color: $color2_dark;
-	}
-
 }
+
 .sidenav a:hover {
   color: $color2_light;
 }
@@ -197,4 +198,11 @@ label {
 /*show the submenu when input is checked*/
 input:checked~div.nav-hidden-content {
 	display: block;
+}
+
+
+
+#current_post i {
+	margin-right: 15px;
+	border-color: $color2;
 }

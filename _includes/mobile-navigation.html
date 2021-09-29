@@ -14,7 +14,11 @@
 							{% if post.url == page.url %}
 								id="current_post"
 							{% endif %}
-							href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
+							href="{{ site.url }}{{ post.url }}">
+							{% if post.url == page.url %}
+								<i class="arrow right"></i>
+							{% endif %}
+							{{ post.title }}</a>
 					{% endif %}
 				{% endfor %}
 			</p>
