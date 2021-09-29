@@ -54,6 +54,12 @@
 	display: none;
 	font-size: 22px;
 
+	.sidenav_seriename {
+		font-weight: bolder;
+		color: $color3;
+		margin-top: 20px;
+	}
+
 	i {
 		margin-left: 5px;
 		margin-right: 15px;
@@ -70,6 +76,7 @@
 	  text-decoration: none;
 	  color: $color1;
 	  display: block;
+	  margin-bottom: 10px;
 	}
 
 	#current_post {
@@ -78,6 +85,8 @@
 
 	.post_same_serie {
 		color: $color2;
+		margin-top: 10px;
+		margin-left: 20px;
 	}
 }
 .sitenav-mobile a:hover {
@@ -154,12 +163,13 @@
 	}
 
 	ul {
-		list-style-type: none;
+		list-style: none;
 		margin-bottom: 10px;
 	}
 
 	li {
 		font-weight: bold;
+		margin-bottom: 10px;
 	}
 
 	a {

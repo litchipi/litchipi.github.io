@@ -6,8 +6,8 @@
 		<div class="nav-hidden-content">
 			<div><a href="/">Index</a></div>
 			{% assign site_posts = site.posts | sort:"serie_index" %}
-			{% if page.series %}
-			<p><h3> {{ page.series }} </h3>
+			{% if page.serie_url %}
+			<p><a class="sidenav_seriename" href="{{ site.url }}{{ page.serie_url }}"> {{ page.series }} </a>
 				{%- for post in site_posts %}
 					{% if post.series == page.series %}
 						<a class="post_same_serie"
