@@ -17,8 +17,8 @@
 		color: $color1;
 		font-size: 33px;
 		margin: unset;
-		margin-top: 70px;
-		padding-top: 70px;
+		margin-top: $post-parts-spacing;
+		padding-top: $post-parts-spacing;
 		margin-bottom: 10px;
 	}
 
@@ -100,7 +100,13 @@
 }
 
 .serie_post_prec_next {
-	margin-top: 30px;
-	border-top: 3px dashed $color1_dark;
-	padding-top: 30px;
+	margin-top: $post-parts-spacing;
+	padding-top: $post-parts-spacing;
+	border-top: 5px dashed $color1_dark;
+	font-size: larger;
+
+	a { 
+		color: $color2_light;
+		margin-left: 10px;
+	}
 }
