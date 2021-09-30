@@ -184,6 +184,72 @@ Args { debug: true, command: "bash", uid: 0, mount_dir: "./" }
 
 The code for this step is available on github [litchipi/crabcan branch "step1"][code-step1]
 
+## Patch for this step
+The patch to apply to a freshly created project using `cargo new --bin`
+<details>
+	diff --git a/Cargo.toml b/Cargo.toml
+	index 498f536..5810b7b 100644
+	--- a/Cargo.toml
+	+++ b/Cargo.toml
+	@@ -7,3 +7,4 @@ edition = "2018"
+	 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+	 [dependencies]
+	+structopt = "0.3.23"
+	diff --git a/src/cli.rs b/src/cli.rs
+	new file mode 100644
+	index 0000000..e6f4cf8
+	--- /dev/null
+	+++ b/src/cli.rs
+	@@ -0,0 +1,34 @@
+	+use std::path::PathBuf;
+	+use structopt::StructOpt;
+	+
+	+#[derive(Debug, StructOpt)]
+	+#[structopt(name = "crabcan", about = "A simple container in Rust.")]
+	+pub struct Args {
+	+    /// Activate debug mode
+	+    // short and long flags (-d, --debug) will be deduced from the field's name
+	+    #[structopt(short, long)]
+	+    debug: bool,
+	+
+	+    /// Command to execute inside the container
+	+    #[structopt(short, long)]
+	+    pub command: String,
+	+
+	+    /// User ID to create inside the container
+	+    #[structopt(short, long)]
+	+    pub uid: u32,
+	+
+	+    /// Directory to mount as root of the container
+	+    #[structopt(parse(from_os_str), short = "m", long = "mount")]
+	+    pub mount_dir: PathBuf,
+	+}
+	+
+	+pub fn parse_args() -> Args {
+	+    let args = Args::from_args();
+	+
+	+    // If args.debug: Setup log at debug level
+	+    // Else: Setup log at info level
+	+
+	+    // Validate arguments
+	+
+	+    args
+	+}
+	diff --git a/src/main.rs b/src/main.rs
+	index e7a11a9..2bf9e3f 100644
+	--- a/src/main.rs
+	+++ b/src/main.rs
+	@@ -1,3 +1,6 @@
+	+mod cli;
+	+
+	 fn main() {
+	-    println!("Hello, world!");
+	+    let args = cli::parse_args();
+	+    println!("{:?}", args);
+	 }
+</details>
+
 # Setup Logging
 
 # Prepare errors handling
