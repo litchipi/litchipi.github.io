@@ -1,8 +1,7 @@
 ---
 layout: post
 title:  "Starting the project"
-date:   2021-09-12 17:34:00 +0200
-modified_date: 2021-09-14 12:00:00 +0200
+date:   2021-09-30 12:18:20 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -182,10 +181,9 @@ You can add a `println!("{:?}", args)` in our `src/main.rs` file to get a nice o
 Args { debug: true, command: "bash", uid: 0, mount_dir: "./" }
 ```
 
-The code for this step is available on github [litchipi/crabcan branch "step1"][code-step1]
-
-## Patch for this step
-The patch to apply to a freshly created project using `cargo new --bin`
+### Patch for this step
+The code for this step is available on github [litchipi/crabcan branch "step1"][code-step1]. \\
+Apply the following patch to a freshly created project using `cargo new --bin`
 <details>
 	diff --git a/Cargo.toml b/Cargo.toml
 	index 498f536..5810b7b 100644
@@ -252,6 +250,121 @@ The patch to apply to a freshly created project using `cargo new --bin`
 
 # Setup Logging
 
+## The logging crates
+Now that we got from the user its input, let's set up a way to give him outputs.
+Simple text is enough, but we want to separate debug informations from basic informations and
+errors. For this, there's a lot of tools, but I chose the crates `log` and `env_logger` to perform
+this task.
+
+The [log crate][log-cratesio] is a very used tool to perform logging. It provides a `Log`
+trait ([see the Book for traits explanation][rustbook-trait]) which defines all the function a logger has to have, and lets any other
+crate implement these functions. I chose the [env_logger crate][env_logger-cratesio] to implement
+these.
+
+In `Cargo.toml`, we add the following dependencies:
+``` toml
+# ...
+log = "0.4.14"
+env_logger = "0.9.0"
+```
+
+## Setting up logging
+Loggers have to be initialized with a level of verbosity. This will define wether to display
+debug messages, or only errors, or nothing at all.
+On our case, we want it to display normal informations by default, and increase verbosity to
+debug messages when the `--debug` flag is passed through the commandline.
+
+Let's initialize our logger in `src/cli.rs`:
+``` rust
+pub fn setup_log(level: log::LevelFilter){
+    env_logger::Builder::from_default_env()
+        .format_timestamp_secs()
+        .filter(None, level)
+        .init();
+}
+```
+Yeah, a function is not really needed, but it's more readable isn't it ? \\
+If you are into [Rust code optimisation][rustcodeopti], you may want to
+[inline this function][rustbook-inlining].
+
+Ok, now let's actually initialize logging right after getting the arguments from the commandline,
+in the `parse_args` functions, let's replace the placeholders with this piece of code:
+``` rust
+if args.debug{
+	setup_log(log::LevelFilter::Debug);
+} else {
+	setup_log(log::LevelFilter::Info);
+}
+```
+
+## Logging
+
+Now that everything is in place, let's actually log something in our terminal !
+In the `main` function of `src/main.rs`, we can output the args gotten into a `info` message.
+This is done using the `log::info!` [macro][rustbook-macros].
+``` rust
+log::info!("{:?}", args);
+```
+The `log` crate allows us to use `error!`, `warn!`, `info!`, `debug!` or `trace!` message levels.
+
+After testing we get the output:
+```
+[2021-09-30T10:17:46Z INFO  crabcan] Args { debug: true, command: "/bin/bash", uid: 0, mount_dir: "./mountdir/" }
+```
+
+### Patch for this step
+The code for this step is available on github [litchipi/crabcan branch "step2"][code-step2]. \\
+Apply the following patch to the code got from previous step
+<details>
+	diff --git a/Cargo.toml b/Cargo.toml
+	index 5810b7b..1767c57 100644
+	--- a/Cargo.toml
+	+++ b/Cargo.toml
+	@@ -8,3 +8,5 @@ edition = "2018"
+
+	 [dependencies]
+	 structopt = "0.3.23"
+	+log = "0.4.14"
+	+env_logger = "0.9.0"
+	diff --git a/src/cli.rs b/src/cli.rs
+	index e6f4cf8..0d4a2ef 100644
+	--- a/src/cli.rs
+	+++ b/src/cli.rs
+	@@ -25,10 +25,20 @@ pub struct Args {
+	 pub fn parse_args() -> Args {
+		 let args = Args::from_args();
+
+	-    // If args.debug: Setup log at debug level
+	-    // Else: Setup log at info level
+	+    if args.debug{
+	+        setup_log(log::LevelFilter::Debug);
+	+    } else {
+	+        setup_log(log::LevelFilter::Info);
+	+    }
+
+		 // Validate arguments
+
+		 args
+	 }
+	+
+	+pub fn setup_log(level: log::LevelFilter){
+	+    env_logger::Builder::from_default_env()
+	+        .format_timestamp_secs()
+	+        .filter(None, level)
+	+        .init();
+	+}
+	diff --git a/src/main.rs b/src/main.rs
+	index 2bf9e3f..05a9d8d 100644
+	--- a/src/main.rs
+	+++ b/src/main.rs
+	@@ -2,5 +2,5 @@ mod cli;
+
+	 fn main() {
+		 let args = cli::parse_args();
+	-    println!("{:?}", args);
+	+    log::info!("{:?}", args);
+	 }
+</details>
 # Prepare errors handling
 
 # Validate arguments
@@ -260,6 +373,15 @@ The patch to apply to a freshly created project using `cargo new --bin`
 [rustbook-struct]: https://doc.rust-lang.org/stable/book/ch05-01-defining-structs.html
 [rustbook-module]: https://doc.rust-lang.org/stable/book/ch07-02-defining-modules-to-control-scope-and-privacy.html
 [rustbook-macroattribute]: https://doc.rust-lang.org/stable/book/ch19-06-macros.html?#attribute-like-macros
+[rustbook-trait]: https://doc.rust-lang.org/book/ch10-02-traits.html
+[rustbook-inlining]: https://nnethercote.github.io/perf-book/inlining.html
+[rustbook-macros]: https://doc.rust-lang.org/book/ch19-06-macros.html
+[log-cratesio]: https://crates.io/crates/log
+[env_logger-cratesio]: https://crates.io/crates/env_logger
 [structopt-cratesio]: https://crates.io/crates/structopt
 [structopt-docs]: https://docs.rs/structopt/latest/structopt/
 [code-step1]: https://github.com/litchipi/crabcan/tree/step1
+[code-step2]: https://github.com/litchipi/crabcan/tree/step2
+[code-step3]: https://github.com/litchipi/crabcan/tree/step3
+[code-step4]: https://github.com/litchipi/crabcan/tree/step4
+[rustcodeopti]: https://gist.github.com/jFransham/369a86eff00e5f280ed25121454acec1
