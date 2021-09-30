@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Starting the project"
-date:   2021-09-30 12:18:20 +0200
+date:   2021-09-30 15:50:35 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -505,6 +505,12 @@ mod errors;
 use errors::exit_with_retcode;
 ```
 
+After testing, we can get the following output:
+```
+[2021-09-30T13:47:45Z INFO  crabcan] Args { debug: true, command: "/bin/bash", uid: 0, mount_dir: "./mountdir/" }
+[2021-09-30T13:47:45Z DEBUG crabcan::errors] Exit without any error, returning 0
+```
+
 ### Patch for this step
 The code for this step is available on github [litchipi/crabcan branch "step3"][code-step3]. \\
 Apply the following patch to the code got from previous step
@@ -617,6 +623,84 @@ Apply the following patch to the code got from previous step
 </details>
 
 # Validate arguments
+
+Before diving into the real work, let's validatet the arguments passed from the commandline.
+We will just check that the `mount_dir` actually exists, but this part can be extended with
+additionnal checks, as we add more options, etc ... \\
+Let's replace the placeholders in `src/cli.rs` with the actual arguments validation:
+``` rust
+pub fn parse_args() -> Result<Args, Errcode> {
+	// ...
+	if !args.mount_dir.exists() && !args.mount_dir.is_dir(){
+		return Err(Errcode::ArgumentInvalid("mount"));
+	}
+	// ...
+}
+```
+The condition checks if the path (a `PathBuf` type as we defined in our `Args` struct) exists
+and if it's a directory.
+
+If it isn't, we return a `Result::Err` with our `Errcode` enum with a custom variant
+`ArgumentInvalid`, specifying that the fault was on argument `mount`. \\
+In `src/errors.rs`, we will define this variant:
+``` rust
+pub enum Errcode{
+	ArgumentInvalid(&'static str),
+}
+```
+And we can add in the `match` statement of the `fmt` function the following:
+``` rust
+match &self{
+	// Message to display when an argument is invalid
+	Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
+
+	// ...
+}
+```
+
+### Patch for this step
+The code for this step is available on github [litchipi/crabcan branch "step4"][code-step4]. \\
+Apply the following patch to the code got from previous step
+<details>
+	diff --git a/src/cli.rs b/src/cli.rs
+	index ba58ec2..821dab6 100644
+	--- a/src/cli.rs
+	+++ b/src/cli.rs
+	@@ -33,7 +33,9 @@ pub fn parse_args() -> Result<Args, Errcode> {
+			 setup_log(log::LevelFilter::Info);
+		 }
+	 
+	-    // Validate arguments
+	+    if !args.mount_dir.exists() && !args.mount_dir.is_dir(){
+	+        return Err(Errcode::ArgumentInvalid("mount"));
+	+    }
+	 
+		 Ok(args)
+	 }
+	diff --git a/src/errors.rs b/src/errors.rs
+	index 268022b..90a8248 100644
+	--- a/src/errors.rs
+	+++ b/src/errors.rs
+	@@ -5,6 +5,7 @@ use std::process::exit;
+	 #[derive(Debug)]
+	 // Contains all possible errors in our tool
+	 pub enum Errcode{
+	+    ArgumentInvalid(&'static str),
+	 }
+	 
+	 impl Errcode{
+	@@ -24,6 +25,10 @@ impl fmt::Display for Errcode {
+		 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+			 // Define what behaviour for each variant of the enum
+			 match &self{
+	+
+	+            // Message to display when an argument is invalid
+	+            Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
+	+
+				 _ => write!(f, "{:?}", self) // For any variant not previously covered
+			 }
+		 }
+</details>
 
 [rust-the-book]: https://doc.rust-lang.org/book/
 [rustbook-struct]: https://doc.rust-lang.org/stable/book/ch05-01-defining-structs.html
