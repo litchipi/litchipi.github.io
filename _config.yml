@@ -14,6 +14,10 @@ author:
 twitter_username: LitchiPi
 github_username:  litchipi
 
+markdown: kramdown
+kramdown:
+  parse_block_html: true
+
 # Build settings
 theme: jekyll-theme-hacker
 plugins:
