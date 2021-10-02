@@ -1,4 +1,5 @@
 .sidenav {
+  max-height: 600px;
   border: 1px solid $color1;
   z-index: 1; /* Stay on top */
   display: block;
@@ -102,6 +103,7 @@
 	border: 1px solid $color1;
 	max-width: $sidenav-width;
 	width: max-content;
+	max-height: $maxnavheight;
 	display: block;
 	background-color: $background-color;
 	overflow-x: hidden; /* Disable horizontal scroll */

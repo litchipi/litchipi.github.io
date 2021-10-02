@@ -26,6 +26,8 @@ $on-medium:        $on-palm !default;
 $on-large:         $on-laptop !default;
 
 $post-parts-spacing: 70px;
+$maxnavheight: 600px;
+$maxnavheight_threshold: 650px;
 // Use media queries like this:
 // @include media-query($on-palm) {
 //   .wrapper {

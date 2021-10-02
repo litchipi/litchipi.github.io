@@ -26,3 +26,8 @@
 	float: left;
 	margin-left: 20px;
 }
+
+header {
+	z-index: 5;
+	background-color: $background-color;
+}

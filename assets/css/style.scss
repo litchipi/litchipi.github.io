@@ -12,10 +12,24 @@
   "categories",
   "home";
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-	.sidenav {padding-top: 15px;}
-	.sidenav a {font-size: 18px;}
+@media screen and (max-height: $maxnavheight_threshold) {
+	.wrapper {
+		margin-left: unset;
+		margin-right: unset;
+	}
+	.contact {
+		display: none;
+	}
+	.footer-contact{
+		display: block;
+	}
+
+	.site-header {border-bottom: unset;}
+
+	.sidenav {display: none;}
+	.sitenav-mobile {display: block;}
+	.inpost-nav {display: none;}
+	.inpost-nav-mobile {display: block;}
 }
 
 @media screen and (max-width: 1200px) {
