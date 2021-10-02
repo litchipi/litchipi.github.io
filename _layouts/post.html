@@ -28,6 +28,12 @@ layout: base
 </div>
 
 <h1 class="post-title">{{ page.title }}</h1>
+{% if page.series %}
+	<div class="post_serie_meta">
+		Post n°{{ page.serie_index }} of serie
+		<a href="{{ site.url }}{{ page.serie_url }}">{{ page.series }}</a>
+	</div>
+{% endif %}
 <div class="post-content">
 {{ content }}
 </div>
