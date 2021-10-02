@@ -260,24 +260,24 @@ REAL STEPS:
 		Introduction
 
 	Post #2:
-		1 - Parsing					OK
-		2 - Setup logging			OK
-		3 - Error handling			OK
-		4 - Argument validation		OK
+		1 - Parsing					OK	WROTE
+		2 - Setup logging			OK	WROTE
+		3 - Error handling			OK	WROTE
+		4 - Argument validation		OK	WROTE
 
 	Post #3:
-		5 - Skeletton				OK
-		6 - Check Linux Version		OK
+		5 - Skeletton				OK	WROTE
+		6 - Check Linux Version		OK	WROTE
 		7 - Generate socket pair	OK
 		8 - Clone the process		OK
 	
 	Post #4:
-		9 - Generate hostname & set up new hostname
-		10 - Perform mounts modifications
-		11 - Set up namespaces
+		9 - Generate hostname & set up new hostname		OK
+		10 - Perform mounts modifications				OK
+		11 - Set up namespaces							OK
 	
 	Post #5:
-		12 - Linux Capabilities
+		12 - Linux Capabilities			OK
 		13 - Syscalls restrictions
 		14 - Ressources restrictions
 	
