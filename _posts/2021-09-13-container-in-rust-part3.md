@@ -1,8 +1,7 @@
 ---
 layout: post
 title:  "Creating a child process"
-date:   2021-09-12 17:34:00 +0200
-modified_date: 2021-09-14 12:00:00 +0200
+date:   2021-10-2 16:30:40 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -284,6 +283,195 @@ Apply the following patch to the code got from previous step
 
 
 # Checking the Linux kernel version
+This step is entirely based on the [`<<check-linux-version>>` part of the original tutorial][tuto]. \\
+However as I work on a much newer version of the kernel, I will just check that the kernel version
+is at least the `v4.8` one, and that the architecture is `x86`.
+
+## Getting system information
+As we want to start interacting with the system to gather informations, we will start to use a
+crate that will be massively usefull later, the [nix crate][nix-cratesio].
+
+Let's check our kernel version:
+``` rust
+pub const MINIMAL_KERNEL_VERSION: f32 = 4.8;
+
+use nix::sys::utsname::uname;
+pub fn check_linux_version() -> Result<(), Errcode> {
+	let host = uname();
+	log::debug!("Linux release: {}", host.release());
+
+	if let Ok(version) = scan_fmt!(host.release(), "{f}.{}", f32) {
+		if version < MINIMAL_KERNEL_VERSION {
+			return Err(Errcode::NotSupported(0));
+		}
+	} else {
+		return Err(Errcode::UnexpectedError(0));
+	}
+
+	if host.machine() != "x86_64" {
+		return Err(Errcode::NotSupported(1));
+	}
+
+	Ok(())
+}
+```
+In this code, we first get the information on the system using [uname][man-uname]. \\
+From these informations, we get the kernel version as a `f32` float using the [scan_fmt crate][scanfmt-cratesio]
+and check if it's at least the `v4.8`, then check if the machine architecture is `x86_64`.
+
+## Handle errors
+If the kernel version is too low or we have a wrong architecture, the function returns a 
+`Errcode::NotSupported`, with a number indicating what was not supported. \\
+If the scan_fmt fails, we return a `Errcode::UnexpectedError`, a new error type that will be used
+eveytime something that shouldn't have any problem goes wrong. We add an additionnal piece of information
+by providing a number for the error (this way we uniquely identify the piece of code that went wrong.
+
+Let's add these new errors to the `src/errors.rs` file:
+``` rust
+pub enum Errcode{
+	UnexpectedError(u8),
+	NotSupported(u8),
+	ArgumentInvalid(&'static str),
+}
+```
+
+## Add to flow & test
+As we will use a macro from the `scan_fmt` crate, let's import it in our `src/main.rs`:
+``` rust
+#[macro_use] extern crate scan_fmt;
+```
+
+And add the needed dependancies in the `Cargo.toml` file:
+``` toml
+[dependancies]
+# ...
+nix = "0.22.1"
+scan_fmt = "0.2.6"
+```
+
+Finally, let's insert the `check_linux_version` function into the flow of our `start` function in 
+`src/container.rs`:
+``` rust
+pub fn start(args: Args) -> Result<(), Errcode> {
+	check_linux_version()?;
+	let mut container = Container::new(args)?;
+	// ...
+}
+```
+> I wont write again how errors handling are so elegant in Rust, but check out how we wired a new
+> function into the flow without needing any additionnal line of code to handle its errors.
+
+After testing that's the kind of output we get:
+```
+[2021-10-02T14:50:14Z INFO  crabcan] Args { debug: true, command: "/bin/bash", uid: 0, mount_dir: "./mountdir/" }
+[2021-10-02T14:50:14Z DEBUG crabcan::container] Linux release: 5.11.0-36-generic
+[2021-10-02T14:50:14Z DEBUG crabcan::container] Creation finished
+[2021-10-02T14:50:14Z DEBUG crabcan::container] Finished, cleaning & exit
+[2021-10-02T14:50:14Z DEBUG crabcan::container] Cleaning container
+[2021-10-02T14:50:14Z DEBUG crabcan::errors] Exit without any error, returning 0
+```
+
+### Patch for this step
+
+The code for this step is available on github [litchipi/crabcan branch “step6”][code-step6].
+Apply the following patch to the code got from previous step
+<details>
+	diff --git a/Cargo.toml b/Cargo.toml
+	index 1767c57..7ce92f3 100644
+	--- a/Cargo.toml
+	+++ b/Cargo.toml
+	@@ -10,3 +10,5 @@ edition = "2018"
+	 structopt = "0.3.23"
+	 log = "0.4.14"
+	 env_logger = "0.9.0"
+	+nix = "0.22.1"
+	+scan_fmt = "0.2.6"
+	diff --git a/src/container.rs b/src/container.rs
+	index a0c168f..468c4b0 100644
+	--- a/src/container.rs
+	+++ b/src/container.rs
+	@@ -28,7 +28,31 @@ impl Container {
+		 }
+	 }
+	 
+	+
+	+pub const MINIMAL_KERNEL_VERSION: f32 = 4.8;
+	+
+	+use nix::sys::utsname::uname;
+	+pub fn check_linux_version() -> Result<(), Errcode> {
+	+    let host = uname();
+	+    log::debug!("Linux release: {}", host.release());
+	+
+	+    if let Ok(version) = scan_fmt!(host.release(), "{f}.{}", f32) {
+	+        if version < MINIMAL_KERNEL_VERSION {
+	+            return Err(Errcode::NotSupported(0));
+	+        }
+	+    } else {
+	+        return Err(Errcode::UnexpectedError(0));
+	+    }
+	+
+	+    if host.machine() != "x86_64" {
+	+        return Err(Errcode::NotSupported(1));
+	+    }
+	+
+	+    Ok(())
+	+}
+	+
+	 pub fn start(args: Args) -> Result<(), Errcode> {
+	+    check_linux_version()?;
+		 let mut container = Container::new(args)?;
+		 if let Err(e) = container.create(){
+			 container.clean_exit()?;
+	diff --git a/src/errors.rs b/src/errors.rs
+	index 90a8248..4b0cb93 100644
+	--- a/src/errors.rs
+	+++ b/src/errors.rs
+	@@ -1,11 +1,14 @@
+	 use std::fmt;
+	 use std::process::exit;
+	 
+	+use crate::container::MINIMAL_KERNEL_VERSION;
+	 // Allows to display a variant with the format {:?}
+	 #[derive(Debug)]
+	 // Contains all possible errors in our tool
+	 pub enum Errcode{
+	+    UnexpectedError(u8),
+		 ArgumentInvalid(&'static str),
+	+    NotSupported(u8),
+	 }
+	 
+	 impl Errcode{
+	@@ -26,6 +29,14 @@ impl fmt::Display for Errcode {
+			 // Define what behaviour for each variant of the enum
+			 match &self{
+	 
+	+            Errcode::NotSupported(errtype) => {
+	+                match errtype {
+	+                    0 => write!(f, "Minimal kernel version required: {}", MINIMAL_KERNEL_VERSION),
+	+                    1 => write!(f, "Only x86_64 architecture is supported"),
+	+                    _ => write!(f, "{:?} (unknown id)", self),
+	+                }
+	+            },
+	+
+				 // Message to display when an argument is invalid
+				 Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
+	 
+	diff --git a/src/main.rs b/src/main.rs
+	index 05856d7..e6183e9 100644
+	--- a/src/main.rs
+	+++ b/src/main.rs
+	@@ -1,5 +1,6 @@
+	 use std::process::exit;
+	 
+	+#[macro_use] extern crate scan_fmt;
+	 mod errors;
+	 mod cli;
+	 mod container;
+</details>
+
+
+
+
 
 # Inter-process communication (IPC) with sockets
 
@@ -293,4 +481,10 @@ Apply the following patch to the code got from previous step
 [syscall-execve]: https://man7.org/linux/man-pages/man2/execve.2.html
 [rustbook-cloneandcopy]: https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html#ways-variables-and-data-interact-clone
 [so-stackheap]: https://stackoverflow.com/questions/79923/what-and-where-are-the-stack-and-heap
-[tuto_contained.c]: https://blog.lizzie.io/linux-containers-in-500-loc.html#org39f5223
+[tuto]: https://blog.lizzie.io/linux-containers-in-500-loc.html
+[nix-cratesio]: https://crates.io/crates/nix
+[man-uname]: https://man7.org/linux/man-pages/man2/uname.2.html
+[scanfmt_-cratesio]: https://crates.io/crates/scan_fmt
+
+[code-step5]: https://github.com/litchipi/crabcan/tree/step5/
+[code-step6]: https://github.com/litchipi/crabcan/tree/step6/
