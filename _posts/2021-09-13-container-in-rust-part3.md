@@ -165,118 +165,7 @@ After testing, we get the following output:
 ### Patch for this step
 
 The code for this step is available on github [litchipi/crabcan branch “step5”][code-step5].
-Apply the following patch to the code got from previous step
-<details>
-	diff --git a/src/config.rs b/src/config.rs
-	new file mode 100644
-	index 0000000..4df3571
-	--- /dev/null
-	+++ b/src/config.rs
-	@@ -0,0 +1,31 @@
-	+use crate::errors::Errcode;
-	+
-	+use std::ffi::CString;
-	+use std::path::PathBuf;
-	+#[derive(Clone)]
-	+pub struct ContainerOpts{
-	+    pub path:       CString,
-	+    pub argv:       Vec<CString>,
-	+
-	+    pub uid:        u32,
-	+    pub mount_dir:  PathBuf,
-	+}
-	+
-	+impl ContainerOpts{
-	+    pub fn new(command: String, uid: u32, mount_dir: PathBuf)
-	+            -> Result<ContainerOpts, Errcode> {
-	+
-	+        let argv: Vec<CString> = command.split_ascii_whitespace()
-	+            .map(|s| CString::new(s).expect("Cannot read arg")).collect();
-	+        let path = argv[0].clone();
-	+
-	+        Ok(
-	+            ContainerOpts {
-	+                path,
-	+                argv,
-	+                uid,
-	+                mount_dir,
-	+            },
-	+        )
-	+    }
-	+}
-	diff --git a/src/container.rs b/src/container.rs
-	new file mode 100644
-	index 0000000..a0c168f
-	--- /dev/null
-	+++ b/src/container.rs
-	@@ -0,0 +1,40 @@
-	+use crate::cli::Args;
-	+use crate::errors::Errcode;
-	+use crate::config::ContainerOpts;
-	+
-	+pub struct Container{
-	+    config: ContainerOpts,
-	+}
-	+
-	+impl Container {
-	+    pub fn new(args: Args) -> Result<Container, Errcode> {
-	+        let config = ContainerOpts::new(
-	+                args.command,
-	+                args.uid,
-	+                args.mount_dir)?;
-	+        Ok(Container {
-	+            config,
-	+        })
-	+    }
-	+
-	+    pub fn create(&mut self) -> Result<(), Errcode> {
-	+        log::debug!("Creation finished");
-	+        Ok(())
-	+    }
-	+
-	+    pub fn clean_exit(&mut self) -> Result<(), Errcode>{
-	+        log::debug!("Cleaning container");
-	+        Ok(())
-	+    }
-	+}
-	+
-	+pub fn start(args: Args) -> Result<(), Errcode> {
-	+    let mut container = Container::new(args)?;
-	+    if let Err(e) = container.create(){
-	+        container.clean_exit()?;
-	+        log::error!("Error while creating container: {:?}", e);
-	+        return Err(e);
-	+    }
-	+    log::debug!("Finished, cleaning & exit");
-	+    container.clean_exit()
-	+}
-	diff --git a/src/main.rs b/src/main.rs
-	index 32c66c0..05856d7 100644
-	--- a/src/main.rs
-	+++ b/src/main.rs
-	@@ -2,6 +2,8 @@ use std::process::exit;
-	 
-	 mod errors;
-	 mod cli;
-	+mod container;
-	+mod config;
-	 
-	 use errors::exit_with_retcode;
-	 
-	@@ -9,7 +11,7 @@ fn main() {
-		 match cli::parse_args(){
-			 Ok(args) => {
-				 log::info!("{:?}", args);
-	-            exit_with_retcode(Ok(()))
-	+            exit_with_retcode(container::start(args))
-			 },
-			 Err(e) => {
-				 log::error!("Error while parsing arguments:\n\t{}", e);
-</details>
-
-
-
-
+The raw patch to apply on the previous step can be found [here][patch-step5]
 
 
 
@@ -295,24 +184,23 @@ Let's check our kernel version:
 ``` rust
 pub const MINIMAL_KERNEL_VERSION: f32 = 4.8;
 
-use nix::sys::utsname::uname;
 pub fn check_linux_version() -> Result<(), Errcode> {
-	let host = uname();
-	log::debug!("Linux release: {}", host.release());
+    let host = uname();
+    log::debug!("Linux release: {}", host.release());
 
-	if let Ok(version) = scan_fmt!(host.release(), "{f}.{}", f32) {
-		if version < MINIMAL_KERNEL_VERSION {
-			return Err(Errcode::NotSupported(0));
-		}
-	} else {
-		return Err(Errcode::UnexpectedError(0));
-	}
+    if let Ok(version) = scan_fmt!(host.release(), "{f}.{}", f32) {
+        if version < MINIMAL_KERNEL_VERSION {
+            return Err(Errcode::NotSupported(0));
+        }
+    } else {
+        return Err(Errcode::ContainerError(0));
+    }
 
-	if host.machine() != "x86_64" {
-		return Err(Errcode::NotSupported(1));
-	}
+    if host.machine() != "x86_64" {
+        return Err(Errcode::NotSupported(1));
+    }
 
-	Ok(())
+    Ok(())
 }
 ```
 In this code, we first get the information on the system using [uname][man-uname]. \\
@@ -322,14 +210,13 @@ and check if it's at least the `v4.8`, then check if the machine architecture is
 ## Handle errors
 If the kernel version is too low or we have a wrong architecture, the function returns a 
 `Errcode::NotSupported`, with a number indicating what was not supported. \\
-If the scan_fmt fails, we return a `Errcode::UnexpectedError`, a new error type that will be used
-eveytime something that shouldn't have any problem goes wrong. We add an additionnal piece of information
-by providing a number for the error (this way we uniquely identify the piece of code that went wrong.
+If the scan_fmt fails, we return a `Errcode::ContainerError`, a new error type for the
+"not supposed to happend at all" kind of errors, in our container.
 
 Let's add these new errors to the `src/errors.rs` file:
 ``` rust
 pub enum Errcode{
-	UnexpectedError(u8),
+	ContainerError(u8),
 	NotSupported(u8),
 	ArgumentInvalid(&'static str),
 }
@@ -374,106 +261,28 @@ After testing that's the kind of output we get:
 ### Patch for this step
 
 The code for this step is available on github [litchipi/crabcan branch “step6”][code-step6].
-Apply the following patch to the code got from previous step
-<details>
-	diff --git a/Cargo.toml b/Cargo.toml
-	index 1767c57..7ce92f3 100644
-	--- a/Cargo.toml
-	+++ b/Cargo.toml
-	@@ -10,3 +10,5 @@ edition = "2018"
-	 structopt = "0.3.23"
-	 log = "0.4.14"
-	 env_logger = "0.9.0"
-	+nix = "0.22.1"
-	+scan_fmt = "0.2.6"
-	diff --git a/src/container.rs b/src/container.rs
-	index a0c168f..468c4b0 100644
-	--- a/src/container.rs
-	+++ b/src/container.rs
-	@@ -28,7 +28,31 @@ impl Container {
-		 }
-	 }
-	 
-	+
-	+pub const MINIMAL_KERNEL_VERSION: f32 = 4.8;
-	+
-	+use nix::sys::utsname::uname;
-	+pub fn check_linux_version() -> Result<(), Errcode> {
-	+    let host = uname();
-	+    log::debug!("Linux release: {}", host.release());
-	+
-	+    if let Ok(version) = scan_fmt!(host.release(), "{f}.{}", f32) {
-	+        if version < MINIMAL_KERNEL_VERSION {
-	+            return Err(Errcode::NotSupported(0));
-	+        }
-	+    } else {
-	+        return Err(Errcode::UnexpectedError(0));
-	+    }
-	+
-	+    if host.machine() != "x86_64" {
-	+        return Err(Errcode::NotSupported(1));
-	+    }
-	+
-	+    Ok(())
-	+}
-	+
-	 pub fn start(args: Args) -> Result<(), Errcode> {
-	+    check_linux_version()?;
-		 let mut container = Container::new(args)?;
-		 if let Err(e) = container.create(){
-			 container.clean_exit()?;
-	diff --git a/src/errors.rs b/src/errors.rs
-	index 90a8248..4b0cb93 100644
-	--- a/src/errors.rs
-	+++ b/src/errors.rs
-	@@ -1,11 +1,14 @@
-	 use std::fmt;
-	 use std::process::exit;
-	 
-	+use crate::container::MINIMAL_KERNEL_VERSION;
-	 // Allows to display a variant with the format {:?}
-	 #[derive(Debug)]
-	 // Contains all possible errors in our tool
-	 pub enum Errcode{
-	+    UnexpectedError(u8),
-		 ArgumentInvalid(&'static str),
-	+    NotSupported(u8),
-	 }
-	 
-	 impl Errcode{
-	@@ -26,6 +29,14 @@ impl fmt::Display for Errcode {
-			 // Define what behaviour for each variant of the enum
-			 match &self{
-	 
-	+            Errcode::NotSupported(errtype) => {
-	+                match errtype {
-	+                    0 => write!(f, "Minimal kernel version required: {}", MINIMAL_KERNEL_VERSION),
-	+                    1 => write!(f, "Only x86_64 architecture is supported"),
-	+                    _ => write!(f, "{:?} (unknown id)", self),
-	+                }
-	+            },
-	+
-				 // Message to display when an argument is invalid
-				 Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
-	 
-	diff --git a/src/main.rs b/src/main.rs
-	index 05856d7..e6183e9 100644
-	--- a/src/main.rs
-	+++ b/src/main.rs
-	@@ -1,5 +1,6 @@
-	 use std::process::exit;
-	 
-	+#[macro_use] extern crate scan_fmt;
-	 mod errors;
-	 mod cli;
-	 mod container;
-</details>
-
-
-
+The raw patch to apply on the previous step can be found [here][patch-step6]
 
 
 # Inter-process communication (IPC) with sockets
+## Introduction to IPC
+When it comes to inter-process communication (or IPC for short), the **Unix domain sockets** or
+"same host socket communication" is the solution.
+They differ from the "network socket communication" kind of sockets that are used to perform
+network operations with remote hosts.
+
+You can find a really nice article about sockets and IPC [here][ipctuto]
+It consists in practice of a file (*Unix philosophy: everything is a file*)
+In which we're going to read or write, to transfer information from one process to another.
+
+For our tool, we don't need any fancy IPC, but we want to be able to transfer simple boolean
+to / from our child process.
+
+## Create a socketpair
+
+
+
+
 
 # Cloning a process
 
@@ -485,6 +294,9 @@ Apply the following patch to the code got from previous step
 [nix-cratesio]: https://crates.io/crates/nix
 [man-uname]: https://man7.org/linux/man-pages/man2/uname.2.html
 [scanfmt_-cratesio]: https://crates.io/crates/scan_fmt
+[ipctuto]: https://opensource.com/article/19/4/interprocess-communication-linux-networking
 
 [code-step5]: https://github.com/litchipi/crabcan/tree/step5/
+[patch-step5]: https://github.com/litchipi/crabcan/commit/step5.diff
 [code-step6]: https://github.com/litchipi/crabcan/tree/step6/
+[patch-step6]: https://github.com/litchipi/crabcan/commit/step6.diff
