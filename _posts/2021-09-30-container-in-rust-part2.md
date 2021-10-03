@@ -183,70 +183,7 @@ Args { debug: true, command: "bash", uid: 0, mount_dir: "./" }
 
 ### Patch for this step
 The code for this step is available on github [litchipi/crabcan branch "step1"][code-step1]. \\
-Apply the following patch to a freshly created project using `cargo new --bin`
-<details>
-	diff --git a/Cargo.toml b/Cargo.toml
-	index 498f536..5810b7b 100644
-	--- a/Cargo.toml
-	+++ b/Cargo.toml
-	@@ -7,3 +7,4 @@ edition = "2018"
-	 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-	 [dependencies]
-	+structopt = "0.3.23"
-	diff --git a/src/cli.rs b/src/cli.rs
-	new file mode 100644
-	index 0000000..e6f4cf8
-	--- /dev/null
-	+++ b/src/cli.rs
-	@@ -0,0 +1,34 @@
-	+use std::path::PathBuf;
-	+use structopt::StructOpt;
-	+
-	+#[derive(Debug, StructOpt)]
-	+#[structopt(name = "crabcan", about = "A simple container in Rust.")]
-	+pub struct Args {
-	+    /// Activate debug mode
-	+    // short and long flags (-d, --debug) will be deduced from the field's name
-	+    #[structopt(short, long)]
-	+    debug: bool,
-	+
-	+    /// Command to execute inside the container
-	+    #[structopt(short, long)]
-	+    pub command: String,
-	+
-	+    /// User ID to create inside the container
-	+    #[structopt(short, long)]
-	+    pub uid: u32,
-	+
-	+    /// Directory to mount as root of the container
-	+    #[structopt(parse(from_os_str), short = "m", long = "mount")]
-	+    pub mount_dir: PathBuf,
-	+}
-	+
-	+pub fn parse_args() -> Args {
-	+    let args = Args::from_args();
-	+
-	+    // If args.debug: Setup log at debug level
-	+    // Else: Setup log at info level
-	+
-	+    // Validate arguments
-	+
-	+    args
-	+}
-	diff --git a/src/main.rs b/src/main.rs
-	index e7a11a9..2bf9e3f 100644
-	--- a/src/main.rs
-	+++ b/src/main.rs
-	@@ -1,3 +1,6 @@
-	+mod cli;
-	+
-	 fn main() {
-	-    println!("Hello, world!");
-	+    let args = cli::parse_args();
-	+    println!("{:?}", args);
-	 }
-</details>
+The raw patch to apply on a freshly created project using `cargo new --bin` can be found [here][patch-step1]
 
 # Setup Logging
 
@@ -314,57 +251,7 @@ After testing we get the output:
 
 ### Patch for this step
 The code for this step is available on github [litchipi/crabcan branch "step2"][code-step2]. \\
-Apply the following patch to the code got from previous step
-<details>
-	diff --git a/Cargo.toml b/Cargo.toml
-	index 5810b7b..1767c57 100644
-	--- a/Cargo.toml
-	+++ b/Cargo.toml
-	@@ -8,3 +8,5 @@ edition = "2018"
-
-	 [dependencies]
-	 structopt = "0.3.23"
-	+log = "0.4.14"
-	+env_logger = "0.9.0"
-	diff --git a/src/cli.rs b/src/cli.rs
-	index e6f4cf8..0d4a2ef 100644
-	--- a/src/cli.rs
-	+++ b/src/cli.rs
-	@@ -25,10 +25,20 @@ pub struct Args {
-	 pub fn parse_args() -> Args {
-		 let args = Args::from_args();
-
-	-    // If args.debug: Setup log at debug level
-	-    // Else: Setup log at info level
-	+    if args.debug{
-	+        setup_log(log::LevelFilter::Debug);
-	+    } else {
-	+        setup_log(log::LevelFilter::Info);
-	+    }
-
-		 // Validate arguments
-
-		 args
-	 }
-	+
-	+pub fn setup_log(level: log::LevelFilter){
-	+    env_logger::Builder::from_default_env()
-	+        .format_timestamp_secs()
-	+        .filter(None, level)
-	+        .init();
-	+}
-	diff --git a/src/main.rs b/src/main.rs
-	index 2bf9e3f..05a9d8d 100644
-	--- a/src/main.rs
-	+++ b/src/main.rs
-	@@ -2,5 +2,5 @@ mod cli;
-
-	 fn main() {
-		 let args = cli::parse_args();
-	-    println!("{:?}", args);
-	+    log::info!("{:?}", args);
-	 }
-</details>
+The raw patch to apply on the previous step can be found [here][patch-step2]
 
 # Prepare errors handling
 As a general practise it's good to take care of handling errors.
@@ -513,114 +400,7 @@ After testing, we can get the following output:
 
 ### Patch for this step
 The code for this step is available on github [litchipi/crabcan branch "step3"][code-step3]. \\
-Apply the following patch to the code got from previous step
-<details>
-	diff --git a/src/cli.rs b/src/cli.rs
-	index 0d4a2ef..ba58ec2 100644
-	--- a/src/cli.rs
-	+++ b/src/cli.rs
-	@@ -1,3 +1,5 @@
-	+use crate::errors::Errcode;
-	+
-	 use std::path::PathBuf;
-	 use structopt::StructOpt;
-	 
-	@@ -22,7 +24,7 @@ pub struct Args {
-		 pub mount_dir: PathBuf,
-	 }
-	 
-	-pub fn parse_args() -> Args {
-	+pub fn parse_args() -> Result<Args, Errcode> {
-		 let args = Args::from_args();
-	 
-		 if args.debug{
-	@@ -33,7 +35,7 @@ pub fn parse_args() -> Args {
-	 
-		 // Validate arguments
-	 
-	-    args
-	+    Ok(args)
-	 }
-	 
-	 pub fn setup_log(level: log::LevelFilter){
-	diff --git a/src/errors.rs b/src/errors.rs
-	new file mode 100644
-	index 0000000..268022b
-	--- /dev/null
-	+++ b/src/errors.rs
-	@@ -0,0 +1,48 @@
-	+use std::fmt;
-	+use std::process::exit;
-	+
-	+// Allows to display a variant with the format {:?}
-	+#[derive(Debug)]
-	+// Contains all possible errors in our tool
-	+pub enum Errcode{
-	+}
-	+
-	+impl Errcode{
-	+    // Translate an Errcode::X into a number to return (the Unix way)
-	+    pub fn get_retcode(&self) -> i32 {
-	+        1 // Everything != 0 will be treated as an error
-	+    }
-	+}
-	+
-	+
-	+#[allow(unreachable_patterns)]
-	+// trait Display, allows Errcode enum to be displayed by:
-	+//      println!("{}", error);
-	+//  in this case, it calls the function "fmt", which we define the behaviour below
-	+impl fmt::Display for Errcode {
-	+
-	+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-	+        // Define what behaviour for each variant of the enum
-	+        match &self{
-	+            _ => write!(f, "{:?}", self) // For any variant not previously covered
-	+        }
-	+    }
-	+}
-	+
-	+// Get the result from a function, and exit the process with the correct error code
-	+pub fn exit_with_retcode(res: Result<(), Errcode>) {
-	+    match res {
-	+        // If it's a success, return 0
-	+        Ok(_) => {
-	+            log::debug!("Exit without any error, returning 0");
-	+            exit(0);
-	+        },
-	+
-	+        // If there's an error, print an error message and return the retcode
-	+        Err(e) => {
-	+            let retcode = e.get_retcode();
-	+            log::error!("Error on exit:\n\t{}\n\tReturning {}", e, retcode);
-	+            exit(retcode);
-	+        }
-	+    }
-	+}
-	diff --git a/src/main.rs b/src/main.rs
-	index 05a9d8d..ededaaf 100644
-	--- a/src/main.rs
-	+++ b/src/main.rs
-	@@ -1,6 +1,16 @@
-	+use std::process::exit;
-	+
-	+mod errors;
-	 mod cli;
-	 
-	+use errors::exit_with_retcode;
-	+
-	 fn main() {
-	-    let args = cli::parse_args();
-	-    log::info!("{:?}", args);
-	+    match cli::parse_args(){
-	+        Ok(_args) => exit_with_retcode(Ok(())),
-	+        Err(e) => {
-	+            log::error!("Error while parsing arguments:\n\t{}", e);
-	+            exit(1);
-	+        }
-	+    };
-	 }
-</details>
+The raw patch to apply on the previous step can be found [here][patch-step3]
 
 # Validate arguments
 
@@ -660,47 +440,7 @@ match &self{
 
 ### Patch for this step
 The code for this step is available on github [litchipi/crabcan branch "step4"][code-step4]. \\
-Apply the following patch to the code got from previous step
-<details>
-	diff --git a/src/cli.rs b/src/cli.rs
-	index ba58ec2..821dab6 100644
-	--- a/src/cli.rs
-	+++ b/src/cli.rs
-	@@ -33,7 +33,9 @@ pub fn parse_args() -> Result<Args, Errcode> {
-			 setup_log(log::LevelFilter::Info);
-		 }
-	 
-	-    // Validate arguments
-	+    if !args.mount_dir.exists() && !args.mount_dir.is_dir(){
-	+        return Err(Errcode::ArgumentInvalid("mount"));
-	+    }
-	 
-		 Ok(args)
-	 }
-	diff --git a/src/errors.rs b/src/errors.rs
-	index 268022b..90a8248 100644
-	--- a/src/errors.rs
-	+++ b/src/errors.rs
-	@@ -5,6 +5,7 @@ use std::process::exit;
-	 #[derive(Debug)]
-	 // Contains all possible errors in our tool
-	 pub enum Errcode{
-	+    ArgumentInvalid(&'static str),
-	 }
-	 
-	 impl Errcode{
-	@@ -24,6 +25,10 @@ impl fmt::Display for Errcode {
-		 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-			 // Define what behaviour for each variant of the enum
-			 match &self{
-	+
-	+            // Message to display when an argument is invalid
-	+            Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
-	+
-				 _ => write!(f, "{:?}", self) // For any variant not previously covered
-			 }
-		 }
-</details>
+The raw patch to apply on the previous step can be found [here][patch-step4]
 
 [rust-the-book]: https://doc.rust-lang.org/book/
 [rustbook-struct]: https://doc.rust-lang.org/stable/book/ch05-01-defining-structs.html
@@ -716,8 +456,12 @@ Apply the following patch to the code got from previous step
 [structopt-cratesio]: https://crates.io/crates/structopt
 [structopt-docs]: https://docs.rs/structopt/latest/structopt/
 [code-step1]: https://github.com/litchipi/crabcan/tree/step1
+[patch-step1]: https://github.com/litchipi/crabcan/commit/step1.diff
 [code-step2]: https://github.com/litchipi/crabcan/tree/step2
+[patch-step2]: https://github.com/litchipi/crabcan/commit/step2.diff
 [code-step3]: https://github.com/litchipi/crabcan/tree/step3
+[patch-step3]: https://github.com/litchipi/crabcan/commit/step3.diff
 [code-step4]: https://github.com/litchipi/crabcan/tree/step4
+[patch-step4]: https://github.com/litchipi/crabcan/commit/step4.diff
 [rustcodeopti]: https://gist.github.com/jFransham/369a86eff00e5f280ed25121454acec1
 [exitcode-meanings]: https://tldp.org/LDP/abs/html/exitcodes.html
