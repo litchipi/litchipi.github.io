@@ -254,18 +254,18 @@ CONTAINER IN RUST:
 
 
 REAL STEPS:
-	Post #1:
-		Theory
-		Explanation
-		Introduction
+	Post #1:		PUBLISHED
+		Theory			WROTE
+		Explanation		WROTE
+		Introduction	WROTE
 
-	Post #2:
+	Post #2:		PUBLISHED
 		1 - Parsing					OK	WROTE
 		2 - Setup logging			OK	WROTE
 		3 - Error handling			OK	WROTE
 		4 - Argument validation		OK	WROTE
 
-	Post #3:
+	Post #3:		PUBLISHED
 		5 - Skeletton				OK	WROTE
 		6 - Check Linux Version		OK	WROTE
 
