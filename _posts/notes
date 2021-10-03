@@ -278,8 +278,8 @@ REAL STEPS:
 	
 	Post #5:
 		12 - Linux Capabilities			OK
-		13 - Syscalls restrictions
-		14 - Ressources restrictions
+		13 - Syscalls restrictions		OK
+		14 - Ressources restrictions	OK
 	
 	Post #6:
 		15 - Execve syscall
