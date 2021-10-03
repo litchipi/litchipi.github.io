@@ -2,6 +2,7 @@
 layout: post
 title:  "Starting the project"
 date:   2021-09-30 15:50:35 +0200
+modified_date: 2021-10-03 18:12:04 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -9,7 +10,6 @@ serie_index: 2
 serie_url: /series/container_in_rust
 ---
 
-# Introduction
 In this post, we will prepare the field for our implementation.
 
 Every programmer is different and some of you may go  directly into Linux syscalls
@@ -23,7 +23,7 @@ Rust users, like **argument parsing**, **errors handling**, **logging**, etc ...
 I will assume here that you already have `rustc` and `cargo` installed, if you don't, please
 follow the instructions on [the Book](https://doc.rust-lang.org/book/ch01-01-installation.html)
 
-## Create the project
+# Create the project
 
 So I guess you've heard that Rust's mascot is Ferris, the little cutie crab.
 Well, let's put Ferris in a container ! :D
