@@ -199,6 +199,76 @@ The raw patch to apply on the previous step can be found [here][patch-step7]
 
 
 # Cloning a process
+In order to regroup everything related to the cloning and management of the child process, let's
+create a new module `child` in a file `src/child.rs`. Let's add it to `src/main.rs`:
+``` rust
+...
+mod config;
+mod child;
+```
+We can also create a new type of errors to deal with anything going wrong in our child process
+generation. Let's add it to `src/errors.rs`:
+``` rust
+pub enum Errcode {
+	...
+	ContainerError(u8),
+	ChildProcessError(u8),
+}
+```
+
+## Creating a child process
+Let's add a child function as a dummy for now, in `src/child.rs`:
+``` rust
+fn child(config: ContainerOpts) -> isize {
+	log::info!("Starting container with command {} and args {:?}", config.path.to_str().unwrap(), config.argv);
+	0
+}
+```
+This process just outputs something to stdout, and returning 0 as a signal that nothing went wrong.
+We also pass it some configuration in which we'll be able to bundle everything we want our
+child process to acknowledge.
+
+Then we create the function cloning the parent process and calling the child, still in `src/child.rs`:
+``` rust
+use crate::errors::Errcode;
+use crate::config::ContainerOpts;
+
+use nix::unistd::Pid;
+use nix::sched::clone;
+use nix::sys::signal::Signal;
+use nix::sched::CloneFlags;
+
+const STACK_SIZE: usize = 1024 * 1024;
+
+pub fn generate_child_process(config: ContainerOpts) -> Result<Pid, Errcode> {
+	let mut tmp_stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
+	let mut flags = CloneFlags::empty();
+	flags.insert(CloneFlags::CLONE_NEWNS);
+	flags.insert(CloneFlags::CLONE_NEWCGROUP);
+	flags.insert(CloneFlags::CLONE_NEWPID);
+	flags.insert(CloneFlags::CLONE_NEWIPC);
+	flags.insert(CloneFlags::CLONE_NEWNET);
+	flags.insert(CloneFlags::CLONE_NEWUTS);
+
+	match clone(
+		Box::new(|| child(config.clone())),
+		&mut tmp_stack,
+		flags,
+		Some(Signal::SIGCHLD as i32)
+	)
+	{
+	     Ok(pid) => Ok(pid),
+	     Err(_) => Err(Errcode::ChildProcessError(0))
+	}
+}
+```
+Let's split this code to understand it properly:
+- We first allocate a raw array (aka buffer) of size `STACK_SIZE` that we define of size `1KiB`.
+This buffer will hold the [stack][whatis-stack] of the child process, note that this is different
+from the original C `clone` function (as detailled in [the nex::sched::clone documentation][docs-clone])
+- FLAGS TODO
+- SYSCALL CLONE TODO
+- PID TODO
 
 [code-step7]: https://github.com/litchipi/crabcan/tree/step7/
 [patch-step7]: https://github.com/litchipi/crabcan/commit/step7.diff
@@ -206,6 +276,8 @@ The raw patch to apply on the previous step can be found [here][patch-step7]
 [ipctuto]: https://opensource.com/article/19/4/interprocess-communication-linux-networking
 [man-socketpair]: https://man7.org/linux/man-pages/man2/socketpair.2.html
 [man-exec]: https://man7.org/linux/man-pages/man3/exec.3.html
+[docs-clone]: https://docs.rs/nix/0.23.0/nix/sched/fn.clone.html
+[whatis-stack]: http://www.c-jump.com/CIS77/ASM/Stack/lecture.html
 
 [AddressFamily-docs]: https://docs.rs/nix/0.22.1/nix/sys/socket/enum.AddressFamily.html
 [SockType-docs]: https://docs.rs/nix/0.22.1/nix/sys/socket/enum.SockType.html
