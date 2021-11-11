@@ -1,8 +1,8 @@
 title: Blog of Litchi Pi
 email: litchi.pi@protonmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-    The blog of a young dumb Rust and Python programmer, interested in
-    a lot of different subjects and willing to talk about his discoveries.
+    Just writing about Rust stuff, Python automation, random tech subjects,
+    and anything related to the world, virutal or not, dreamt or real.
 baseurl: "/"
 domain: "litchipi.github.io"
 url: "https://litchipi.github.io"
