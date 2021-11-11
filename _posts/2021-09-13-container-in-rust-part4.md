@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Birth of a child process"
-date:   2021-09-12 17:34:00 +0200
+date:   2021-11-11 17:34:00 +0200
 modified_date: 2021-09-14 12:00:00 +0200
 categories: rust
 tags: rust tutorial learning container docker
@@ -243,13 +243,7 @@ const STACK_SIZE: usize = 1024 * 1024;
 pub fn generate_child_process(config: ContainerOpts) -> Result<Pid, Errcode> {
 	let mut tmp_stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
 	let mut flags = CloneFlags::empty();
-	flags.insert(CloneFlags::CLONE_NEWNS);
-	flags.insert(CloneFlags::CLONE_NEWCGROUP);
-	flags.insert(CloneFlags::CLONE_NEWPID);
-	flags.insert(CloneFlags::CLONE_NEWIPC);
-	flags.insert(CloneFlags::CLONE_NEWNET);
-	flags.insert(CloneFlags::CLONE_NEWUTS);
-
+	// Flags definition
 	match clone(
 		Box::new(|| child(config.clone())),
 		&mut tmp_stack,
@@ -265,19 +259,156 @@ pub fn generate_child_process(config: ContainerOpts) -> Result<Pid, Errcode> {
 Let's split this code to understand it properly:
 - We first allocate a raw array (aka buffer) of size `STACK_SIZE` that we define of size `1KiB`.
 This buffer will hold the [stack][whatis-stack] of the child process, note that this is different
-from the original C `clone` function (as detailled in [the nex::sched::clone documentation][docs-clone])
-- FLAGS TODO
-- SYSCALL CLONE TODO
-- PID TODO
+from the original C `clone` function (as detailled in [the nix::sched::clone documentation][docs-clone])
+
+- Secondly we will set the flags we want to activate, a complete list of the flags and their simple description is available
+[in the nix::sched::CloneFlags documentation][docs-CloneFlags], or directly [in the linux manual for clone(2)][man-clone].
+I'll skip the flags definition for their own seperate parts as they deserve some proper explanation.
+
+- We then call the `clone` syscall, redirecting to our `child` function, with our `config` struct
+as an argument, the temporary stack for the process, the flags we set, along with the instruction to
+send the parent process a `SIGCHLD` signal when the child exits.
+
+- If everything goes well, we get a process ID, or `PID` in short, a number identifying uniquely our
+process for the Linux kernel. We return this pid as we will store it in our container struct.
+
+### A word about namespaces
+To understand fully Linux namespaces, I recommend reading the [Wikipedia article about it][wikipedia-linux-namespaces]
+for a quick and somewhat complete introduction.
+
+In one line, a namespace is an isolation provided by the Linux kernel to allow a process in this
+namespace to have a different version of a resource than the global system.
+
+In practice:
+- Network namespace: Have a different network configuration than the whole system
+
+- Host namespace: Have a different hostname than the whole system
+
+- PID: Use any PID numbers inside the namespace, including the `init` one (PID = 1)
+
+- And many others ...
+
+Check out the [linux manual for namespaces][man-namespaces] for more details about namespaces.
+
+### Setting the flags
+Back to our child cloning preparation, each flag will **create a new namespace for the child process**,
+for the given namespace. If a flag is not set, usually the namespace the child will be part of will
+be the one from the parent process.
+
+Here is the complete code:
+``` rust
+	let mut flags = CloneFlags::empty();
+	flags.insert(CloneFlags::CLONE_NEWNS);
+	flags.insert(CloneFlags::CLONE_NEWCGROUP);
+	flags.insert(CloneFlags::CLONE_NEWPID);
+	flags.insert(CloneFlags::CLONE_NEWIPC);
+	flags.insert(CloneFlags::CLONE_NEWNET);
+	flags.insert(CloneFlags::CLONE_NEWUTS);
+```
+
+- `CLONE_NEWNS` will start the cloned child in a new `mount` namespace,
+initialized with a copy of the namespace from the parent process. \\
+*Check [the mount-namespaces manual][man-mountns] for more informations*
+
+- `CLONE_NEWCGROUP` will start the cloned child in a new `cgroup` namespace. \\
+Cgroups are explained a bit later in the tutorial as we will use them to restrict
+the capabilities our child process have. \\
+*Check [the cgroup-namespaces manual][man-cgroupns] for more informations*
+
+- `CLONE_NEWPID` will start the cloned child in a new `pid` namespace. \\
+This basically mean that our child process will *think* he will have a PID = X,
+but in reality in the Linux kernel he will have another one. \\
+*Check [the pid-namespaces manual][man-pidns] for more informations*
+
+- `CLONE_NEWIPC` will start the cloned child in a new `ipc` namespace. \\
+Processes inside this namespace can interact with each other, whereas processes outside
+cannot through normal `IPC` methods. \\
+*Check [the ipc-namespaces manual][man-ipcns] for more informations*
+
+- `CLONE_NEWNET` will start the cloned child in a new `network` namespace. \\
+It will not share the interfaces and network configurations from other
+namespaces. \\
+*Check [the network-namespaces manual][man-networkns] for more informations*
+
+- `CLONE_NEWUTS` will start the cloned child in a new `uts` namespace. \\
+I cannot explain why the name UTS (*UTS stands for UNIX Timesharing System*), 
+but it will allow the contained process to set its own hostname and NIS domain name
+in the namespace. \\
+*Check [the uts-namespaces manual][man-utsns] for more informations*
+
+So while creating our child, we will separate its world from the one of the system,
+allowing it to modify whatever it wants (at least for the namespaces used) without harming
+the configuration of our system.
+
+## Generate the child from the container
+Now that we have our clean `generate_child_process` function, we can call it in the `create`
+function of our container, and store the resulting `pid` in the struct fields.
+
+In `src/container.rs`, add:
+``` rust
+use crate::child::generate_child_process;
+use nix::unistd::Pid;
+use nix::sys::wait::waitpid;
+
+pub struct Container {
+	// ...
+	child_pid: Option<Pid>,
+}
+
+impl Container {
+	pub fn new(args: Args) -> Result<Container, Errcode> {
+		// ...
+		Ok(Container {
+			sockets,
+			config,
+			child_pid: None,
+		})
+	}
+
+	pub fn create(&mut self) -> Result<(), Errcode> {
+		let pid = generate_child_process(self.config.clone())?;
+		self.child_pid = Some(pid);
+		log::debug!("Creation finished");
+		Ok(())
+	}
+	// ...
+}
+```
+
+## Waiting for the child to finish
+TODO
+
+## Testing
+TODO
+
+### Patch for this step
+
+The code for this step is available on github [litchipi/crabcan branch “step8”][code-step8]. \\
+The raw patch to apply on the previous step can be found [here][patch-step8]
 
 [code-step7]: https://github.com/litchipi/crabcan/tree/step7/
 [patch-step7]: https://github.com/litchipi/crabcan/commit/step7.diff
+[code-step8]: https://github.com/litchipi/crabcan/tree/step8/
+[patch-step8]: https://github.com/litchipi/crabcan/commit/step8.diff
 
 [ipctuto]: https://opensource.com/article/19/4/interprocess-communication-linux-networking
 [man-socketpair]: https://man7.org/linux/man-pages/man2/socketpair.2.html
 [man-exec]: https://man7.org/linux/man-pages/man3/exec.3.html
+[man-clone]: https://man7.org/linux/man-pages/man2/clone.2.html
+[man-namespaces]: https://man7.org/linux/man-pages/man7/namespaces.7.html
+
+[man-mountns]: https://man7.org/linux/man-pages/man7/mount_namespaces.7.html
+[man-cgroupns]: https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html
+[man-pidns]: https://man7.org/linux/man-pages/man7/pid_namespaces.7.html
+[man-ipcns]: https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html
+[man-networkns]: https://man7.org/linux/man-pages/man7/network_namespaces.7.html
+[man-utsns]: https://man7.org/linux/man-pages/man7/uts_namespaces.7.html
+
 [docs-clone]: https://docs.rs/nix/0.23.0/nix/sched/fn.clone.html
+[docs-CloneFlags]: https://docs.rs/nix/0.23.0/nix/sched/struct.CloneFlags.html
 [whatis-stack]: http://www.c-jump.com/CIS77/ASM/Stack/lecture.html
 
 [AddressFamily-docs]: https://docs.rs/nix/0.22.1/nix/sys/socket/enum.AddressFamily.html
 [SockType-docs]: https://docs.rs/nix/0.22.1/nix/sys/socket/enum.SockType.html
+
+[wikipedia-linux-namespaces]: https://en.wikipedia.org/wiki/Namespace
