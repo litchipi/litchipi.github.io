@@ -1,8 +1,7 @@
 ---
 layout: post
 title:  "Birth of a child process"
-date:   2021-11-11 17:34:00 +0200
-modified_date: 2021-09-14 12:00:00 +0200
+date:   2021-11-12 9:55:00 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -376,10 +375,63 @@ impl Container {
 ```
 
 ## Waiting for the child to finish
-TODO
+Now that our container contains everything to generate a new clean child process,
+we will update the main function to wait for the child to finish. \\
+In `src/container.rs`:
+``` rust
+pub fn start(args: Args) -> Result<(), Errcode> {
+    if let Err(e) = container.create(){
+		// ...
+    }
+    log::debug!("Container child PID: {:?}", container.child_pid);
+    wait_child(container.child_pid)?;
+	// ...
+}
+```
+
+This way, the container generate the child process using the arguments we give to it, then
+hold and wait for the child to end before quitting.
+
+The function `wait_child` is defined in `src/container.rs` like so:
+``` rust
+pub fn wait_child(pid: Option<Pid>) -> Result<(), Errcode>{
+    if let Some(child_pid) = pid {
+        log::debug!("Waiting for child (pid {}) to finish", child_pid);
+        if let Err(e) = waitpid(child_pid, None){
+            log::error!("Error while waiting for pid to finish: {:?}", e);
+            return Err(Errcode::ContainerError(1));
+        }
+    }
+    Ok(())
+}
+```
+This function uses the syscall `waitpid`, from the [manual][man-waitpid]:
+> The **waitpid()** system call suspends execution of the calling process until a child specified by
+> pid argument has changed state. By default, waitpid() waits only for terminated children,
+> but this behavior is modifiable via the options argument, as described below.
+
+As we wait for the termination, we will just pass `None` as options, and return a `Errcode::ContainerError`
+error if the syscall didn't finished succesfully.
 
 ## Testing
-TODO
+Maybe since the beginning you were wondering why we need `sudo` to run our tests, in the first 7
+steps that wasn't necessary, but here as we create new namespaces for our child process, the
+`CAP_SYS_ADMIN` capacity is needed (See the [manual for capabilities][man-capabilities] or
+[this article from LWN][lwn-capabilities]).
+
+Here's the output we can get from testing this step:
+```
+[2021-11-12T08:52:17Z INFO  crabcan] Args { debug: true, command: "/bin/bash", uid: 0, mount_dir: "./mountdir/" }
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Linux release: 5.11.0-38-generic
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Container sockets: (3, 4)
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Creation finished
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Container child PID: Some(Pid(134400))
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Waiting for child (pid 134400) to finish
+[2021-11-12T08:52:17Z INFO  crabcan::child] Starting container with command /bin/bash and args ["/bin/bash"]
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Finished, cleaning & exit
+[2021-11-12T08:52:17Z DEBUG crabcan::container] Cleaning container
+[2021-11-12T08:52:17Z DEBUG crabcan::errors] Exit without any error, returning 0
+```
 
 ### Patch for this step
 
@@ -403,6 +455,8 @@ The raw patch to apply on the previous step can be found [here][patch-step8]
 [man-ipcns]: https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html
 [man-networkns]: https://man7.org/linux/man-pages/man7/network_namespaces.7.html
 [man-utsns]: https://man7.org/linux/man-pages/man7/uts_namespaces.7.html
+[man-waitpid]: https://linux.die.net/man/2/waitpid
+[man-capabilities]: https://man7.org/linux/man-pages/man7/capabilities.7.html
 
 [docs-clone]: https://docs.rs/nix/0.23.0/nix/sched/fn.clone.html
 [docs-CloneFlags]: https://docs.rs/nix/0.23.0/nix/sched/struct.CloneFlags.html
@@ -412,3 +466,4 @@ The raw patch to apply on the previous step can be found [here][patch-step8]
 [SockType-docs]: https://docs.rs/nix/0.22.1/nix/sys/socket/enum.SockType.html
 
 [wikipedia-linux-namespaces]: https://en.wikipedia.org/wiki/Namespace
+[lwn-capabilities]: https://lwn.net/Articles/486306/
