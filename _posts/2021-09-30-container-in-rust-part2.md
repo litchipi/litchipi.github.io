@@ -66,12 +66,12 @@ The method is very straightforward, by defining a [struct][rustbook-struct] cont
 #[derive(Debug, StructOpt)]
 #[structopt(name = "example", about = "An example of StructOpt usage.")]
 struct Opt {
-	/// Activate debug mode
-	// short and long flags (-d, --debug) will be deduced from the field's name
-	#[structopt(short, long)]
-	debug: bool
+    /// Activate debug mode
+    // short and long flags (-d, --debug) will be deduced from the field's name
+    #[structopt(short, long)]
+    debug: bool
 
-	// etc ...
+    // etc ...
 }
 ```
 A detailed use of structopt and all its power is available in its [documentation][structopt-docs].
@@ -228,9 +228,9 @@ Ok, now let's actually initialize logging right after getting the arguments from
 in the `parse_args` functions, let's replace the placeholders with this piece of code:
 ``` rust
 if args.debug{
-	setup_log(log::LevelFilter::Debug);
+    setup_log(log::LevelFilter::Debug);
 } else {
-	setup_log(log::LevelFilter::Info);
+    setup_log(log::LevelFilter::Info);
 }
 ```
 
@@ -350,8 +350,8 @@ whatever we want if everything goes well.
 Let's see how we can set this up in the `parse_args` function:
 ``` rust
 pub fn parse_args() -> Result<Args, Errcode> {
-	// ...
-	Ok(args)
+    // ...
+    Ok(args)
  }
 ```
 If something goes wrong during the execution, we can simply write:
@@ -366,14 +366,14 @@ Okay, but now we need to do something different in our `main` depending on how t
 with an error or a success. Let's use a `match` statement to define what to do in both cases:
 ``` rust
 match cli::parse_args(){
-	Ok(args) => {
-		log::info!("{:?}", args);
-		exit_with_retcode(Ok(()))
-	},
-	Err(e) => {
-		log::error!("Error while parsing arguments:\n\t{}", e);
-		exit(e.get_retcode());
-	}
+    Ok(args) => {
+        log::info!("{:?}", args);
+        exit_with_retcode(Ok(()))
+    },
+    Err(e) => {
+        log::error!("Error while parsing arguments:\n\t{}", e);
+        exit(e.get_retcode());
+    }
 };
 ```
 Here, in case the arguments parsing was successful, we log the args and call the
@@ -410,11 +410,11 @@ additionnal checks, as we add more options, etc ... \\
 Let's replace the placeholders in `src/cli.rs` with the actual arguments validation:
 ``` rust
 pub fn parse_args() -> Result<Args, Errcode> {
-	// ...
-	if !args.mount_dir.exists() && !args.mount_dir.is_dir(){
-		return Err(Errcode::ArgumentInvalid("mount"));
-	}
-	// ...
+    // ...
+    if !args.mount_dir.exists() && !args.mount_dir.is_dir(){
+        return Err(Errcode::ArgumentInvalid("mount"));
+    }
+    // ...
 }
 ```
 The condition checks if the path (a `PathBuf` type as we defined in our `Args` struct) exists
@@ -425,16 +425,16 @@ If it isn't, we return a `Result::Err` with our `Errcode` enum with a custom var
 In `src/errors.rs`, we will define this variant:
 ``` rust
 pub enum Errcode{
-	ArgumentInvalid(&'static str),
+    ArgumentInvalid(&'static str),
 }
 ```
 And we can add in the `match` statement of the `fmt` function the following:
 ``` rust
 match &self{
-	// Message to display when an argument is invalid
-	Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
+    // Message to display when an argument is invalid
+    Errcode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
 
-	// ...
+    // ...
 }
 ```
 

@@ -29,11 +29,11 @@ use std::path::PathBuf;
 
 #[derive(Clone)]
 pub struct ContainerOpts{
-	pub path:       CString,
-	pub argv:       Vec<CString>,
+    pub path:       CString,
+    pub argv:       Vec<CString>,
 
-	pub uid:        u32,
-	pub mount_dir:  PathBuf,
+    pub uid:        u32,
+    pub mount_dir:  PathBuf,
 }
 ```
 Let's analyse what we got there:
@@ -56,20 +56,20 @@ that's why we add a `derive(Clone)` attribute to the struct. \\
 Let's create the constructor of our configuration struct
 ``` rust
 impl ContainerOpts{
-	pub fn new(command: String, uid: u32, mount_dir: PathBuf) -> Result<ContainerOpts, Errcode> {
-		let argv: Vec<CString> = command.split_ascii_whitespace()
-			.map(|s| CString::new(s).expect("Cannot read arg")).collect();
-		let path = argv[0].clone();
+    pub fn new(command: String, uid: u32, mount_dir: PathBuf) -> Result<ContainerOpts, Errcode> {
+        let argv: Vec<CString> = command.split_ascii_whitespace()
+            .map(|s| CString::new(s).expect("Cannot read arg")).collect();
+        let path = argv[0].clone();
  
-		Ok(
-			ContainerOpts {
-				path,
-				argv,
-				uid,
-				mount_dir,
-			}
-		)
-	}
+        Ok(
+            ContainerOpts {
+                path,
+                argv,
+                uid,
+                mount_dir,
+            }
+        )
+    }
 }
 ```
 Nothing too complicated here, we just get each arg from the command `String`, and creates a
@@ -85,29 +85,29 @@ use crate::errors::Errcode;
 use crate::config::ContainerOpts;
 
 pub struct Container{
-	config: ContainerOpts,
+    config: ContainerOpts,
 }
 
 impl Container {
-	pub fn new(args: Args) -> Result<Container, Errcode> {
-		let config = ContainerOpts::new(
-			args.command,
-			args.uid,
-			args.mount_dir)?;
-		Ok(Container {
-			config,
-			})
-		}
+    pub fn new(args: Args) -> Result<Container, Errcode> {
+        let config = ContainerOpts::new(
+            args.command,
+            args.uid,
+            args.mount_dir)?;
+        Ok(Container {
+            config,
+            })
+        }
 
-	pub fn create(&mut self) -> Result<(), Errcode> {
-		log::debug!("Creation finished");
-		Ok(())
-	}
+    pub fn create(&mut self) -> Result<(), Errcode> {
+        log::debug!("Creation finished");
+        Ok(())
+    }
 
-	pub fn clean_exit(&mut self) -> Result<(), Errcode>{
-		log::debug!("Cleaning container");
-		Ok(())
-	}
+    pub fn clean_exit(&mut self) -> Result<(), Errcode>{
+        log::debug!("Cleaning container");
+        Ok(())
+    }
 }
 ```
 The `struct Container` is defined with a unique `config` field containing our configuration,
@@ -123,14 +123,14 @@ It returns a `Result` that will inform if an error happened during the process.
 
 ``` rust
 pub fn start(args: Args) -> Result<(), Errcode> {
-	let mut container = Container::new(args)?;
-	if let Err(e) = container.create(){
-		container.clean_exit()?;
-		log::error!("Error while creating container: {:?}", e);
-		return Err(e);
-	}
-	log::debug!("Finished, cleaning & exit");
-	container.clean_exit()
+    let mut container = Container::new(args)?;
+    if let Err(e) = container.create(){
+        container.clean_exit()?;
+        log::error!("Error while creating container: {:?}", e);
+        return Err(e);
+    }
+    log::debug!("Finished, cleaning & exit");
+    container.clean_exit()
 }
 ```
 
@@ -138,8 +138,8 @@ The `?` you see at the end of the lines is used to propagate the errors. \\
 `let mut container = Container::new(args)?;` is the equivalent of:
 ``` rust
 let mut container = match Container::new(args) {
-	Ok(el) => el,
-	Err(e) => return Err(e),
+    Ok(el) => el,
+    Err(e) => return Err(e),
 }
 ```
 However for this, the type in case of `Err` has to be the same. That's why having a unique
@@ -220,9 +220,9 @@ If the scan_fmt fails, we return a `Errcode::ContainerError`, a new error type f
 Let's add these new errors to the `src/errors.rs` file:
 ``` rust
 pub enum Errcode{
-	ContainerError(u8),
-	NotSupported(u8),
-	ArgumentInvalid(&'static str),
+    ContainerError(u8),
+    NotSupported(u8),
+    ArgumentInvalid(&'static str),
 }
 ```
 
@@ -244,9 +244,9 @@ Finally, let's insert the `check_linux_version` function into the flow of our `s
 `src/container.rs`:
 ``` rust
 pub fn start(args: Args) -> Result<(), Errcode> {
-	check_linux_version()?;
-	let mut container = Container::new(args)?;
-	// ...
+    check_linux_version()?;
+    let mut container = Container::new(args)?;
+    // ...
 }
 ```
 > I wont write again how errors handling are so elegant in Rust, but check out how we wired a new

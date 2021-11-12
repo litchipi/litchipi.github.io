@@ -45,15 +45,15 @@ use std::os::unix::io::RawFd;
 use nix::sys::socket::{socketpair, AddressFamily, SockType, SockFlag, send, MsgFlags, recv};
 
 pub fn generate_socketpair() -> Result<(RawFd, RawFd), Errcode> {
-	match socketpair(
-		AddressFamily::Unix,
-		SockType::SeqPacket,
-		None,
-		SockFlag::SOCK_CLOEXEC)
-		{
-			Ok(res) => Ok(res),
-			Err(_) => Err(Errcode::SocketError(0))
-	}
+    match socketpair(
+        AddressFamily::Unix,
+        SockType::SeqPacket,
+        None,
+        SockFlag::SOCK_CLOEXEC)
+        {
+            Ok(res) => Ok(res),
+            Err(_) => Err(Errcode::SocketError(0))
+    }
 }
 ```
 
@@ -74,8 +74,8 @@ the [standard Unix way of creating socket pairs][man-socketpair], but called fro
 As we use a new `Errcode::SocketError` variant, let's add it to `src/errors.rs` now:
 ``` rust
  pub enum Errcode{
-	// ...
-	SocketError(u8),
+    // ...
+    SocketError(u8),
  }
 ```
 
@@ -91,9 +91,9 @@ use crate::ipc::generate_socketpair;
 use std::os::unix::io::RawFd;
 #[derive(Clone)]
 pub struct ContainerOpts{
-	// ...
-	pub fd:         RawFd,
-	// ...
+    // ...
+    pub fd:         RawFd,
+    // ...
 }
 ```
 
@@ -101,17 +101,17 @@ Also let's modify the `ContainerOpts::new` function so it returns the sockets al
 constructed `ContainerOpts` struct, the parent container needs to get access to it.
 ``` rust
 impl ContainerOpts{
-	pub fn new(command: String, uid: u32, mount_dir: PathBuf) -> Result<(ContainerOpts, (RawFd, RawFd)), Errcode> {
-		let sockets = generate_socketpair()?;
-		// ...
-		Ok((
-			ContainerOpts {
-				// ...
-				fd: sockets.1.clone(),
-			},
-			sockets
-		))
-	}
+    pub fn new(command: String, uid: u32, mount_dir: PathBuf) -> Result<(ContainerOpts, (RawFd, RawFd)), Errcode> {
+        let sockets = generate_socketpair()?;
+        // ...
+        Ok((
+            ContainerOpts {
+                // ...
+                fd: sockets.1.clone(),
+            },
+            sockets
+        ))
+    }
  }
 ```
 
@@ -126,37 +126,37 @@ use std::os::unix::io::RawFd;
 // ...
 
 pub struct Container{
-	sockets: (RawFd, RawFd),
-	config: ContainerOpts,
+    sockets: (RawFd, RawFd),
+    config: ContainerOpts,
  }
  
 impl Container {
-	pub fn new(args: Args) -> Result<Container, Errcode> {
-		let (config, sockets) = ContainerOpts::new(
-			// ...
-			)?;
-		Ok(Container {
-			sockets,
-			config,
-		})
-	}
+    pub fn new(args: Args) -> Result<Container, Errcode> {
+        let (config, sockets) = ContainerOpts::new(
+            // ...
+            )?;
+        Ok(Container {
+            sockets,
+            config,
+        })
+    }
 }
 ```
 
 As sockets  requires some cleaning before exit, let's close them in the `clean_exit` function.
 ``` rust
 pub fn clean_exit(&mut self) -> Result<(), Errcode>{
-	// ...
-	if let Err(e) = close(self.sockets.0){
-		log::error!("Unable to close write socket: {:?}", e);
-		return Err(Errcode::SocketError(3));
-	}
+    // ...
+    if let Err(e) = close(self.sockets.0){
+        log::error!("Unable to close write socket: {:?}", e);
+        return Err(Errcode::SocketError(3));
+    }
 
-	if let Err(e) = close(self.sockets.1){
-		log::error!("Unable to close read socket: {:?}", e);
-		return Err(Errcode::SocketError(4));
-	}
-	// ...
+    if let Err(e) = close(self.sockets.1){
+        log::error!("Unable to close read socket: {:?}", e);
+        return Err(Errcode::SocketError(4));
+    }
+    // ...
 }
 ```
 
@@ -167,21 +167,21 @@ We only want to transfer boolean, so let's create a `send_boolean` and `recv_boo
 in `src/ipc.rs`:
 ``` rust
 pub fn send_boolean(fd: RawFd, boolean: bool) -> Result<(), Errcode> {
-	let data: [u8; 1] = [boolean.into()];
-	if let Err(e) = send(fd, &data, MsgFlags::empty()) {
-		log::error!("Cannot send boolean through socket: {:?}", e);
-		return Err(Errcode::SocketError(1));
-	};
-	Ok(())
+    let data: [u8; 1] = [boolean.into()];
+    if let Err(e) = send(fd, &data, MsgFlags::empty()) {
+        log::error!("Cannot send boolean through socket: {:?}", e);
+        return Err(Errcode::SocketError(1));
+    };
+    Ok(())
 }
 
 pub fn recv_boolean(fd: RawFd) -> Result<bool, Errcode> {
-	let mut data: [u8; 1] = [0];
-	if let Err(e) = recv(fd, &mut data, MsgFlags::empty()) {
-		log::error!("Cannot receive boolean from socket: {:?}", e);
-		return Err(Errcode::SocketError(2));
-	}
-	Ok(data[0] == 1)
+    let mut data: [u8; 1] = [0];
+    if let Err(e) = recv(fd, &mut data, MsgFlags::empty()) {
+        log::error!("Cannot receive boolean from socket: {:?}", e);
+        return Err(Errcode::SocketError(2));
+    }
+    Ok(data[0] == 1)
 }
 ```
 Here it's just some interacting with the `send` and `recv` functions from the `nix` crate, handling
@@ -209,9 +209,9 @@ We can also create a new type of errors to deal with anything going wrong in our
 generation. Let's add it to `src/errors.rs`:
 ``` rust
 pub enum Errcode {
-	...
-	ContainerError(u8),
-	ChildProcessError(u8),
+    ...
+    ContainerError(u8),
+    ChildProcessError(u8),
 }
 ```
 
@@ -219,8 +219,8 @@ pub enum Errcode {
 Let's add a child function as a dummy for now, in `src/child.rs`:
 ``` rust
 fn child(config: ContainerOpts) -> isize {
-	log::info!("Starting container with command {} and args {:?}", config.path.to_str().unwrap(), config.argv);
-	0
+    log::info!("Starting container with command {} and args {:?}", config.path.to_str().unwrap(), config.argv);
+    0
 }
 ```
 This process just outputs something to stdout, and returning 0 as a signal that nothing went wrong.
@@ -240,19 +240,19 @@ use nix::sched::CloneFlags;
 const STACK_SIZE: usize = 1024 * 1024;
 
 pub fn generate_child_process(config: ContainerOpts) -> Result<Pid, Errcode> {
-	let mut tmp_stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
-	let mut flags = CloneFlags::empty();
-	// Flags definition
-	match clone(
-		Box::new(|| child(config.clone())),
-		&mut tmp_stack,
-		flags,
-		Some(Signal::SIGCHLD as i32)
-	)
-	{
-	     Ok(pid) => Ok(pid),
-	     Err(_) => Err(Errcode::ChildProcessError(0))
-	}
+    let mut tmp_stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
+    let mut flags = CloneFlags::empty();
+    // Flags definition
+    match clone(
+        Box::new(|| child(config.clone())),
+        &mut tmp_stack,
+        flags,
+        Some(Signal::SIGCHLD as i32)
+    )
+    {
+         Ok(pid) => Ok(pid),
+         Err(_) => Err(Errcode::ChildProcessError(0))
+    }
 }
 ```
 Let's split this code to understand it properly:
@@ -296,13 +296,13 @@ be the one from the parent process.
 
 Here is the complete code:
 ``` rust
-	let mut flags = CloneFlags::empty();
-	flags.insert(CloneFlags::CLONE_NEWNS);
-	flags.insert(CloneFlags::CLONE_NEWCGROUP);
-	flags.insert(CloneFlags::CLONE_NEWPID);
-	flags.insert(CloneFlags::CLONE_NEWIPC);
-	flags.insert(CloneFlags::CLONE_NEWNET);
-	flags.insert(CloneFlags::CLONE_NEWUTS);
+    let mut flags = CloneFlags::empty();
+    flags.insert(CloneFlags::CLONE_NEWNS);
+    flags.insert(CloneFlags::CLONE_NEWCGROUP);
+    flags.insert(CloneFlags::CLONE_NEWPID);
+    flags.insert(CloneFlags::CLONE_NEWIPC);
+    flags.insert(CloneFlags::CLONE_NEWNET);
+    flags.insert(CloneFlags::CLONE_NEWUTS);
 ```
 
 - `CLONE_NEWNS` will start the cloned child in a new `mount` namespace,
@@ -350,27 +350,27 @@ use nix::unistd::Pid;
 use nix::sys::wait::waitpid;
 
 pub struct Container {
-	// ...
-	child_pid: Option<Pid>,
+    // ...
+    child_pid: Option<Pid>,
 }
 
 impl Container {
-	pub fn new(args: Args) -> Result<Container, Errcode> {
-		// ...
-		Ok(Container {
-			sockets,
-			config,
-			child_pid: None,
-		})
-	}
+    pub fn new(args: Args) -> Result<Container, Errcode> {
+        // ...
+        Ok(Container {
+            sockets,
+            config,
+            child_pid: None,
+        })
+    }
 
-	pub fn create(&mut self) -> Result<(), Errcode> {
-		let pid = generate_child_process(self.config.clone())?;
-		self.child_pid = Some(pid);
-		log::debug!("Creation finished");
-		Ok(())
-	}
-	// ...
+    pub fn create(&mut self) -> Result<(), Errcode> {
+        let pid = generate_child_process(self.config.clone())?;
+        self.child_pid = Some(pid);
+        log::debug!("Creation finished");
+        Ok(())
+    }
+    // ...
 }
 ```
 
@@ -381,11 +381,11 @@ In `src/container.rs`:
 ``` rust
 pub fn start(args: Args) -> Result<(), Errcode> {
     if let Err(e) = container.create(){
-		// ...
+        // ...
     }
     log::debug!("Container child PID: {:?}", container.child_pid);
     wait_child(container.child_pid)?;
-	// ...
+    // ...
 }
 ```
 
