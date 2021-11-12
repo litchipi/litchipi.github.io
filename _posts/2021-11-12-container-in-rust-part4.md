@@ -144,6 +144,7 @@ impl Container {
 ```
 
 As sockets  requires some cleaning before exit, let's close them in the `clean_exit` function.
+
 ``` rust
 pub fn clean_exit(&mut self) -> Result<(), Errcode>{
     // ...
@@ -199,14 +200,15 @@ The raw patch to apply on the previous step can be found [here][patch-step7]
 
 # Cloning a process
 In order to regroup everything related to the cloning and management of the child process, let's
-create a new module `child` in a file `src/child.rs`. Let's add it to `src/main.rs`:
+create a new module `child` in a file `src/child.rs`. First of all, define the modules in `src/main.rs`:
 ``` rust
 ...
 mod config;
 mod child;
 ```
-We can also create a new type of errors to deal with anything going wrong in our child process
-generation. Let's add it to `src/errors.rs`:
+We can also create new types of errors to deal with anything going wrong in our
+child process generation or anything during the preparation inside the container,
+and add them to `src/errors.rs`:
 ``` rust
 pub enum Errcode {
     ...
@@ -216,14 +218,15 @@ pub enum Errcode {
 ```
 
 ## Creating a child process
-Let's add a child function as a dummy for now, in `src/child.rs`:
+For now, we create a dummy child function simply echoing the arguments it will execute.
+We create the function in `src/child.rs`:
 ``` rust
 fn child(config: ContainerOpts) -> isize {
     log::info!("Starting container with command {} and args {:?}", config.path.to_str().unwrap(), config.argv);
     0
 }
 ```
-This process just outputs something to stdout, and returning 0 as a signal that nothing went wrong.
+The child process simply outputs something to stdout, and returns 0 as a signal that nothing went wrong.
 We also pass it some configuration in which we'll be able to bundle everything we want our
 child process to acknowledge.
 
@@ -272,18 +275,18 @@ send the parent process a `SIGCHLD` signal when the child exits.
 process for the Linux kernel. We return this pid as we will store it in our container struct.
 
 ### A word about namespaces
-To understand fully Linux namespaces, I recommend reading the [Wikipedia article about it][wikipedia-linux-namespaces]
+If you don't know what Linux namespaces are, I recommend reading the [Wikipedia article about it][wikipedia-linux-namespaces]
 for a quick and somewhat complete introduction.
 
 In one line, a namespace is an isolation provided by the Linux kernel to allow a process in this
 namespace to have a different version of a resource than the global system.
 
 In practice:
-- Network namespace: Have a different network configuration than the whole system
+- **Network namespace**: Have a different network configuration than the whole system
 
-- Host namespace: Have a different hostname than the whole system
+- **Host namespace**: Have a different hostname than the whole system
 
-- PID: Use any PID numbers inside the namespace, including the `init` one (PID = 1)
+- **PID**: Use any PID numbers inside the namespace, including the `init` one (PID = 1)
 
 - And many others ...
 
