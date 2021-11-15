@@ -1,0 +1,292 @@
+CONTAINER IN RUST:
+
+	Each step is a branch in the github repository, and can be executed without any problem
+	-> Link the branch of the step into the article main body
+
+	Le plus dur, c'est de comprendre l'utilisation de la librairie "nix" en Rust, et essayer
+	d'adapter les instructions depuis un paradygme de programmation en C vers celui en Rust.
+
+	1 - Parsing args
+		Using 'structopt' because easier (link to doc)
+		Using example modified to build the struct
+		Use "///" on top of struct elements to add as helpers inside the --help message
+
+		https://docs.rs/structopt/0.3.23/structopt/
+
+	2 - Setup logging
+
+		https://docs.rs/log/0.4.14/log/
+		https://docs.rs/env_logger/0.9.0/env_logger/index.html
+		https://docs.rs/env_logger/0.9.0/env_logger/struct.Builder.html
+
+	3 - Setup the errors handling
+		Clean errors handling through Errcodes
+		Implement the "Format" trait for easy printing and debugging
+		Unified errors for the whole project
+
+		https://doc.rust-lang.org/std/fmt/trait.Display.html
+	
+	4 - Validate arguments
+		Check that the file paths exist for "mount", return errors if not
+		"command" gets the whole commandline to be executed
+
+	5 - Check Linux version
+
+	6 - Generate a hostname
+		https://docs.rs/rand/0.8.4/rand/seq/trait.SliceRandom.html
+	
+	7 - Generate the sockets pairs
+		https://docs.rs/nix/0.22.1/nix/sys/socket/fn.socketpair.html
+
+		Address:
+			https://docs.rs/nix/0.22.1/nix/sys/socket/enum.AddressFamily.html
+			https://man7.org/linux/man-pages/man7/unix.7.html
+
+		Socket type:
+			https://docs.rs/nix/0.22.1/nix/sys/socket/enum.SockType.html
+
+		Protocol:
+			None car va être défini automatiquement
+
+		flags:
+			https://docs.rs/nix/0.22.1/src/nix/sys/socket/mod.rs.html#170-199
+	
+	8 - Clone the process
+		https://doc.servo.org/nix/sched/fn.clone.html
+
+		Callback:
+			Closure avec les arguments qu'on veut
+			https://doc.rust-lang.org/rust-by-example/fn/closures.html
+
+		Clone flags:
+			https://doc.servo.org/src/nix/sched.rs.html#18-44
+
+		Signal:
+			None, pas besoin
+
+		Clean if anything happens
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.close.html
+
+	9 - Set hostname
+		TODO
+
+	10 - Perform chroot
+		Mount / Umount / Pivot root
+		Bind mounts:
+			https://docs.docker.com/storage/bind-mounts/
+
+	11 - Configure namespaces
+		What is namespaces ?
+			https://lwn.net/Articles/531114/
+
+			Expliquer que c'est une isolation, que le kernel effectue des actions
+			sur tous les namespaces et qu'on veut particulièrement pas ce genre de
+			choses, pour isoler notre child process
+
+		Unshare:
+			https://man7.org/linux/man-pages/man2/unshare.2.html
+
+		Sending messages through sockets:
+			https://docs.rs/nix/0.22.1/nix/sys/socket/fn.send.html
+
+		Configure child & parent namespaces:
+			TODO: Diagram showing the flow
+
+		Setgroups, setresgid, setresuid:
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.setgroups.html
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.setresgid.html
+			https://docs.rs/nix/0.22.1/nix/unistd/fn.setresuid.html
+
+	12 - Set up capabilities
+		Divise le pouvoir d'un administrateur pour déléguer de façon sécurisée et contrôllée
+		des privilèges à des exécutables, utilisateurs ou processus.
+
+		https://www.youtube.com/watch?v=WYC6DHzWzFQ
+
+		Pour voir les capabilities d'un processus:
+			cat /proc/$pid/task/$thread_id/status | grep Cap
+
+		Les différents sets de capabilities:
+			- Effective:
+				Vérifiées pour chaque action privilégiée demandée
+
+			- Permitted:
+				Capabilities qui sont autorisée à l'activation
+				Qui ne le sont pas, mais qui peuvent l'être
+
+			- Inheritable:
+				Lors du chargement d'un exécutable, passe ce set, filtré par les permissions
+				du fichier exécutable, en tant que permitted.
+
+			- Ambient:
+				Lors du chargement d'un exécutable, automatiquement passe en permitted ces
+				capabilities chez le child.
+				Chaque capabilities dans ce set doit être dans les Inheritable & Permitted.
+
+			- Bounding:
+				Limite tous les sets de capabilities aux capabilities activées dans ce set
+
+		Drop:
+			Fonction d'audit du système / kernel, permet d'avoir des informations sensibles
+			sur le kernel
+			CAP_AUDIT_CONTROL,
+			CAP_AUDIT_READ,			// not even namespaced
+			CAP_AUDIT_WRITE,
+
+			Permet d'éteindre le système (suspend), not namespaced
+			CAP_BLOCK_SUSPEND
+
+			Permet d'effectuer une attaque brute-force pour lire n'importe quel fichier
+			du système depuis l'intérieur d'un container
+			https://blog.lizzie.io/linux-containers-in-500-loc.html#fn.15
+			CAP_DAC_READ_SEARCH
+
+			Permet de modifier un exécutable ayant le bit SUID, sans enlever celui-ci.
+			Dangereuse pratique de sécurité
+			Exemple escalation: https://pentestlab.blog/2017/09/25/suid-executables/
+			CAP_FSETID
+
+			Permet de "locker" de la mémoire RAM
+			Pourrait être utilisée pour faire du deni de service
+			CAP_IPC_LOCK,
+
+			Permet de modifier des paramètres de sécurité de AppArmor, SELinux et SMACK
+			Pas namespaced, permetterait à un container de décider de ses propres mesures de
+			sécurités sur le host.
+			CAP_MAC_ADMIN,
+			CAP_MAC_OVERRIDE,
+
+			Permet de créer des fichiers correspondant à du hardware.
+			Une application contained pourrait recréer un fichier pour le disque dur et avoir
+			un accès total à celui-ci depuis l'intérieur du container
+			https://blog.lizzie.io/linux-containers-in-500-loc.html#fn.18
+			CAP_MKNOD
+
+			Permet de déterminer les capabilities d'un exécutable
+			Ne peut pas décider des capabilities que le process contained n'a pas, mais peut
+			tout de même affecter la sécurité du host car le host a accès à ce fichier.
+			CAP_SETFCAP
+
+			Permet de lire le syslog du kernel, et d'effectuer des actions destructrices dessus
+			Expose les addresses du kernel, ce qui peut être utiliser pour contourner l'ASLR.
+			Example: https://github.com/bcoles/kasld
+				Sur le premier example, on voit:
+				```
+					[.] checking /var/log/syslog for free_reserved_area() info ...
+					leaked address: ffffffff820b2000
+					kernel base (likely): ffffffff82000000
+					kernel base (likely): ffffffff81000000
+				```
+			CAP_SYSLOG
+
+			Permet beaucoup trop de choses.
+			Choses parmis lesquelles on aurait besoin, mais qui ne vaut pas la complexité.
+			CAP_SYS_ADMIN
+
+			Permet de rebooter le système et de charger un nouveau kernel.
+			CAP_SYS_BOOT
+
+			Permet de loader des modules kernel
+			CAP_SYS_MODULE
+
+			Permet de définir la priorité (nice) des process.
+			Cela permetterait un deni de service sur le système.
+			CAP_SYS_NICE
+
+			Permet d'avoir un accès complet aux IO du système
+			CAP_SYS_RAWIO
+
+			Permet de contourner les limites du kernel en terme de ressources
+			CAP_SYS_RESOURCE
+
+			N'est pas namespaced, donc permet de modifier l'heure du système host
+			CAP_SYS_TIME
+
+			Permet d'interférer avec le réveil système, peut bloquer "suspend"
+			CAP_WAKE_ALARM
+
+			Les capabilities retenues peuvent être vues à la partie 
+				"Retained Capabilities" du tutoriel original avec leurs explications concrètes.
+	
+	13 - Disable some syscalls
+		Link to articles about seccomp
+
+		Disable with comparator:
+			If bit "S_ISUID" equals to 1, refuse the syscall
+
+		TODO:
+			- Add list of syscalls refused, and why they are refused
+			- Add list of syscalls allowed, and why we didn't refused them
+	
+	14 - Restrict resources
+		On ne veut pas que le processus dans le container s'accapare toutes les resources du système
+		Alors on utilise des mesures du kernel pour les limiter.
+
+		Utilisation des control groups (cgroups):
+			https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt
+	
+	15 - Perform execve syscall
+		TODO
+	
+	16 - Test
+		The executable to run has to be statically linked, no other libraries or dependencies
+	
+	17 - Add parameter to allow mount some directories inside the container
+		To allow /bin/sh to be run
+	
+	18 - Final tests & thoughts
+		Run bash shell
+		test "ip addr" command to see how we don't got any network interface
+		etc ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+REAL STEPS:
+	Post #1:		PUBLISHED
+		Theory			WROTE
+		Explanation		WROTE
+		Introduction	WROTE
+
+	Post #2:		PUBLISHED
+		1 - Parsing					OK	WROTE
+		2 - Setup logging			OK	WROTE
+		3 - Error handling			OK	WROTE
+		4 - Argument validation		OK	WROTE
+
+	Post #3:		PUBLISHED
+		5 - Skeletton				OK	WROTE
+		6 - Check Linux Version		OK	WROTE
+
+	Post #4:
+		7 - Generate socket pair	OK  WROTE
+		8 - Clone the process		OK	WROTE
+	
+	Post #5:
+		9 - Generate hostname & set up new hostname		OK
+		10 - Perform mounts modifications				OK
+	
+	Post #6:
+		11 - Set up namespaces							OK
+		12 - Linux Capabilities			OK
+	
+	Post #7:
+		13 - Syscalls restrictions		OK
+		14 - Ressources restrictions	OK
+	
+	Post #8:
+		15 - Execve syscall
+		16 - Test with statically linked C program
+		17 - Adding parameter to mount /bin & /lib inside container
+		18 - Final tests
