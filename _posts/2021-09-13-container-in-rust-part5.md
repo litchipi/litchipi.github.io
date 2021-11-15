@@ -67,7 +67,15 @@ pub enum Errcode {
 }
 ```
 
-## Applying it to the container configuration
+Also, we use the `rand` crate to have randomness in our hostname generation, so we have to add
+it to the dependencies of `Cargo.toml`:
+``` toml
+[dependencies]
+# ...
+rand = "0.8.4"
+```
+
+## Adding to the configuration of the container
 Now that we have a way to generate a `String` containing our "random" hostname, we can use it to set our container
 configuration in `src/config.rs`:
 
@@ -85,22 +93,102 @@ impl ContainerOpts {
 }
 ```
 
-## ...
+And finally, we can create in `src/hostname.rs` the function that will modify the actual hostname
+of our *host namespace* with the new one, using the `sethostname` syscall:
+
 ``` rust
-+use crate::errors::Errcode;
-+use nix::unistd::sethostname;
-+pub fn set_container_hostname(hostname: &String) -> Result<(), Errcode> {
-+    match sethostname(hostname){
-+        Ok(_) => {
-+            log::debug!("Container hostname is now {}", hostname);
-+            Ok(())
-+        },
-+        Err(_) => {
-+            log::error!("Cannot set hostname {} for container", hostname);
-+            Err(Errcode::HostnameError(0))
-+        }
-+    }
-+}
+use crate::errors::Errcode;
+
+use nix::unistd::sethostname;
+
+pub fn set_container_hostname(hostname: &String) -> Result<(), Errcode> {
+    match sethostname(hostname){
+        Ok(_) => {
+            log::debug!("Container hostname is now {}", hostname);
+            Ok(())
+        },
+        Err(_) => {
+            log::error!("Cannot set hostname {} for container", hostname);
+            Err(Errcode::HostnameError(0))
+        }
+    }
+}
 ```
 
+> Check the [linux manual][man-sethostname] for more informations on the `sethostname` syscall
+
+## Applying the configuration to the child process
+
+For all the configuration we will apply to the child process, let's create a wrapping functions
+setting everything, and add the `set_container_hostname` function call inside it, in `src/child.rs`:
+
+``` rust
+use crate::hostname::set_container_hostname;
+
+fn setup_container_configurations(config: &ContainerOpts) -> Result<(), Errcode> {
+    set_container_hostname(&config.hostname)?;
+    Ok(())
+}
+```
+
+And we then simply call the configuration function at the beginning of our child process:
+
+``` rust
+fn child(config: ContainerOpts) -> isize {
+    match setup_container_configurations(&config) {
+        Ok(_) => log::info!("Container set up successfully"),
+        Err(e) => {
+            log::error!("Error while configuring container: {:?}", e);
+            return -1;
+        }
+    }
+	// ...
+}
+```
+
+Note that we cannot "recover" from any error hapenning in our child process, so we simply end it
+with a `retcode = -1` along with a nice error message in case a problem occurs.
+
+The final thing to do here is adding to `src/main.rs` the `hostname` module we just created:
+``` rust
+// ...
+mod hostname;
+```
+
+## Testing
+When testing, we can see the hostname we generated appear:
+```
+[2021-11-15T09:07:38Z INFO  crabcan] Args { debug: true, command: "/bin/bash", uid: 0, mount_dir: "./mountdir/" }
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Linux release: 5.13.0-21-generic
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Container sockets: (3, 4)
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Creation finished
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Container child PID: Some(Pid(26003))
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Waiting for child (pid 26003) to finish
+[2021-11-15T09:07:38Z DEBUG crabcan::hostname] Container hostname is now weird-moon-191
+[2021-11-15T09:07:38Z INFO  crabcan::child] Container set up successfully
+[2021-11-15T09:07:38Z INFO  crabcan::child] Starting container with command /bin/bash and args ["/bin/bash"]
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Finished, cleaning & exit
+[2021-11-15T09:07:38Z DEBUG crabcan::container] Cleaning container
+[2021-11-15T09:07:38Z DEBUG crabcan::errors] Exit without any error, returning 0
+```
+And running it several times outputs different funny names :D
+```
+[2021-11-15T09:08:33Z DEBUG crabcan::hostname] Container hostname is now round-cat-221
+
+[2021-11-15T09:08:48Z DEBUG crabcan::hostname] Container hostname is now silent-man-45
+
+[2021-11-15T09:09:01Z DEBUG crabcan::hostname] Container hostname is now soft-cat-149
+```
+
+### Patch for this step
+
+The code for this step is available on github [litchipi/crabcan branch “step9”][code-step9]. \\
+The raw patch to apply on the previous step can be found [here][patch-step9]
+
 # Modifying the container mount point
+
+
+[man-sethostname]: https://linux.die.net/man/2/sethostname
+
+[code-step9]: https://github.com/litchipi/crabcan/tree/step9/
+[patch-step9]: https://github.com/litchipi/crabcan/commit/step9.diff
