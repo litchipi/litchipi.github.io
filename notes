@@ -1,0 +1,4 @@
+Follow up to container in rust blog posts using Nix:
+    Create FHS shell with buildFHSUserEnv (see https://nixos.org/manual/nixpkgs/stable/)
+    Use it to have a FHS container directly in crabcan
+    Profit from it to create a quick intro to Nix system & langag
