@@ -274,7 +274,7 @@ The raw patch to apply on the previous step can be found [here][patch-step6]
 [tuto]: https://blog.lizzie.io/linux-containers-in-500-loc.html
 [nix-cratesio]: https://crates.io/crates/nix
 [man-uname]: https://man7.org/linux/man-pages/man2/uname.2.html
-[scanfmt_-cratesio]: https://crates.io/crates/scan_fmt
+[scanfmt-cratesio]: https://crates.io/crates/scan_fmt
 
 [code-step5]: https://github.com/litchipi/crabcan/tree/step5/
 [patch-step5]: https://github.com/litchipi/crabcan/commit/step5.diff
