@@ -278,8 +278,8 @@ REAL STEPS:
 		10 - Perform mounts modifications				OK      WROTE
 	
 	Post #6:
-		11 - Set up namespaces			OK
-		12 - Linux Capabilities			OK
+		11 - Set up namespaces			OK      WROTE
+		12 - Linux Capabilities			OK      WROTE
 	
 	Post #7:
 		13 - Syscalls restrictions		OK
