@@ -16,10 +16,12 @@ footer {
 }
 
 .site-title {
+  display: block;
   font-size: 35px;
   font-weight: 300;
+  padding-top: 15px;
+  margin-bottom: 15px;
   letter-spacing: -1px;
-  margin-bottom: 0;
   float: left;
 
   @include media-query($on-palm) {

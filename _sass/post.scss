@@ -15,7 +15,8 @@
 	h1 {
 		border-top: 7px solid $color1_dark;
 		color: $color1;
-		font-size: 33px;
+		font-size: 35px;
+                font-weight: bold;
 		margin: unset;
 		margin-top: $post-parts-spacing;
 		padding-top: $post-parts-spacing;
@@ -24,20 +25,22 @@
 
 	h2 {
 		color: $color2;
-		font-size: 27px;
+		font-size: 30px;
 		margin: unset;
 		margin-top: 40px;
 		margin-left: 5px;
 		margin-bottom: 10px;
+                font-weight: bold;
 	}
 
 	h3 {
 		color: $color3;
-		font-size: 24px;
+		font-size: 25px;
 		margin: unset;
 		margin-top: 30px;
-		margin-left: 15px;
+		margin-left: 10px;
 		margin-bottom: 5px;
+                font-weight: bold;
 	}
 
 	h4 {
@@ -61,10 +64,30 @@
 
 	blockquote {
 		font-size: 15px;
-		color: $color2_light;
+		color:  darken(desaturate($color2, 40%), 0%);
 		border-left-color: $color2_dark;
-		margin-left: 15px;
+		margin-left: 20px;
 		padding-left: unset;
+
+            strong {
+                color: darken(desaturate($color3_light, 30%), 5%);
+            }
+
+            em {
+                color: darken(desaturate($color3_light, 20%), 5%);
+                font-style: italic;
+            }
+
+            a {
+                color: $color2; //desaturate($color2, 30%);
+                text-decoration: underline solid $color2_dark;
+            }
+
+            code {
+                background-color: darken($color2_dark, 70%);
+                border-color: desaturate($color2, 50%);
+                color: $color2_light;
+            }
 	}
 
 
@@ -80,12 +103,18 @@
 	}
 
 	strong {
-		color: $color3;
+		color: $color3_light;
 	}
 
 	em {
-		color: lighten($color3, 10%);
+		color: $color3_light;
 	}
+
+        img {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
 }
 
 .post-meta-serie {
@@ -105,7 +134,7 @@
 	border-top: 5px dashed $color1_dark;
 	font-size: larger;
 
-	a { 
+	a {
 		color: $color2_light;
 		margin-left: 10px;
 	}
