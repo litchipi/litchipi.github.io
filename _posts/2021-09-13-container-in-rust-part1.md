@@ -2,6 +2,7 @@
 layout: post
 title:  "Introduction to containers"
 date:   2021-09-20 10:42:34 +0200
+modified_date: 2022-03-09 12:24:52 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -18,6 +19,31 @@ First of all, to understand how we're going to build our container,
 let's figure out what is a container and why we need it,
 we'll examine then few examples of containers commonly used.
 
+# About this tutorial
+
+This tutorial can be read in **2 ways**:
+
+- As a programming guide to get a good hand on *Rust* while building an interesting project \\
+No prior experience needed to follow the guide, but keep [the Book][rust-the-book] in a
+browser bookmark as you may need it to understand what is happening.
+
+- As a detailed example of how Linux kernel features are used to achieve a great level of
+security and isolation in containers. \\
+In this case, you can totally skip the coding part as the explanation will be mostly done
+before that.
+
+**Keep in mind that I am learning while creating this project, I may make mistakes and in case
+of doubts, please check the differents souces I give or the Internet to double check what I say**.
+
+It is mainly a way for me to learn about Linux security measures, virtualization features,
+how containerisation works, and the abilitiy to translate a program written with C paradygms
+with Rust, interacting with the Linux kernel.
+Fortunately for me, there's a lot of documentation out there, videos, articles, etc ...
+
+I advice any reader to just go back and forth with the [original tutorial][linux-containers-tutorial]
+to get precisions, an other explanation, and a bunch of links to the outer world
+(check the footnotes).
+
 # What is a container ?
 
 ## Overview
@@ -30,7 +56,7 @@ manager create a box that will look like a system in which the container can exe
 
 ### Usages
 Containerisation is used a lot of servers, as it allows great flexibility and reliability
-for DevOps engineers. Also if a software crashes, takes 100% of its ressources available,
+for DevOps engineers. Also if a software crashes, takes 100% of its resources available,
 or even gets compromised by a hacker, it wont hurt the whole system and all the other
 services who are running on it.
 
@@ -134,26 +160,6 @@ needing another Linux Kernel.
 
 Visit [the linuxcontainers.org website][lxc-website] for more informations, including informations
 about the variants LXD, LXCFS and other related tools.
-
-# About this tutorial
-
-In this tutorial, I assume the reader already know how to create simple programs in Rust.
-I won't exaplain anything related to the Rust langage, but I will link as much as possible
-notions of the Rust langage to [The Book][rust-the-book] to allow anyone to read an
-unknown / forgotten subject if needed.
-
-It is mainly a way for me to learn about Linux security measures, virtualization features,
-how containerisation works, and the abilitiy to translate a program written with C paradygms
-with Rust, interacting with the Linux kernel.
-Fortunately for me, there's a lot of documentation out there, videos, articles,
-[the tutorial in which this series of post is based][linux-containers-tutorial], etc ... 
-
-**Keep in mind that I am learning while creating this project, I may make mistakes and in case
-of doubts, please check the differents souces I give or the Internet to double check what I say**.
-
-I advice any reader to just go back and forth with the [original tutorial][linux-containers-tutorial]
-to get precisions, an other explanation, and a bunch of links to the outer world
-(check the footnotes).
 
 [docker-website-whatisdocker]: https://www.docker.com/resources/what-container
 [linux-containers-tutorial]: https://blog.lizzie.io/linux-containers-in-500-loc.html
