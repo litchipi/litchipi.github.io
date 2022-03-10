@@ -128,9 +128,15 @@
 	color: $color3;
 }
 
+.comments {
+    border-top: 5px dashed $color1_dark;
+    padding-top: $post-parts-spacing/2;
+}
+
 .serie_post_prec_next {
 	margin-top: $post-parts-spacing;
 	padding-top: $post-parts-spacing;
+        padding-bottom: $post-parts-spacing/2;
 	border-top: 5px dashed $color1_dark;
 	font-size: larger;
 

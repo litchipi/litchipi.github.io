@@ -34,6 +34,7 @@ layout: base
 		<a href="{{ site.url }}{{ page.serie_url }}">{{ page.series }}</a>
 	</div>
 {% endif %}
+
 <div class="post-content">
 {{ content }}
 </div>
@@ -69,3 +70,14 @@ layout: base
 	{% endif %}
 </div>
 {% endif %}
+
+<div class="comments">
+    <script
+            src="https://utteranc.es/client.js"
+            repo="litchipi/litchipi.github.io"
+            issue-term="pathname"
+            theme="github-dark"
+            crossorigin="anonymous"
+            async>
+    </script>
+</div>
