@@ -2,6 +2,7 @@
 layout: post
 title:  "User namespaces and Linux Capabilties"
 date:   2022-01-06 09:40:00 +0200
+modified_date: 2022-08-23 9:01:22 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -147,6 +148,23 @@ impl Container {
        handle_child_uid_map(pid, self.sockets.0)?;
        // ...
     }
+```
+
+Finally, we want to close the socket once it's no longer used, so let's add in `src/child.rs`:
+
+```rust
+fn child(config: ContainerOpts) -> isize {
+    match setup_container_configurations(&config) {
+        // ...
+    }
+
+    if let Err(_) = close(config.fd){
+        log::error!("Error while closing socket ...");
+        return -1;
+    }
+
+    // ...
+}
 ```
 
 ## Mapping the UID / GID
