@@ -2,7 +2,7 @@
 layout: post
 title:  "Starting the project"
 date:   2021-09-30 15:50:35 +0200
-modified_date: 2021-10-03 18:12:04 +0200
+modified_date: 2022-08-24 23:17:22 +0200
 categories: rust
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
@@ -411,7 +411,7 @@ Let's replace the placeholders in `src/cli.rs` with the actual arguments validat
 ``` rust
 pub fn parse_args() -> Result<Args, Errcode> {
     // ...
-    if !args.mount_dir.exists() && !args.mount_dir.is_dir(){
+    if !args.mount_dir.exists() || !args.mount_dir.is_dir(){
         return Err(Errcode::ArgumentInvalid("mount"));
     }
     // ...
@@ -441,6 +441,8 @@ match &self{
 ### Patch for this step
 The code for this step is available on github [litchipi/crabcan branch "step4"][code-step4]. \\
 The raw patch to apply on the previous step can be found [here][patch-step4]
+
+> **Special thanks** to *@kevinji* who pointed out an error in the code of this step :D
 
 [rust-the-book]: https://doc.rust-lang.org/book/
 [rustbook-struct]: https://doc.rust-lang.org/stable/book/ch05-01-defining-structs.html
