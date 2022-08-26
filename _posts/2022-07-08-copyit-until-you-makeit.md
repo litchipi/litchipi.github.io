@@ -111,7 +111,7 @@ on a single context. You want to be able to use a code you wrote as a building b
 for any other tool you may need.
 
 For example, I recently created a HTTP Proxy in Python after reading the great
-[Black Hat Python](blackhatpython) book, you can check the code [here](httpproxy),
+[Black Hat Python][blackhatpython] book, you can check the code [here][httpproxy],
 and it allows me to create custom and complex intercept / replace operations on
 the data very simply:
 
@@ -153,7 +153,7 @@ in front of me.
 You need the right lockpicks to pick the right lock, and even if a pick-gun will
 do, you'll always learn more about the lock by manually locking it.
 
-That's also why I created [fart](fartcode), a packet interception / edition, which
+That's also why I created [fart][fartcode], a packet interception / edition, which
 brings nothing more than what Burp has to offer, only that it's my dirty code,
 and I'm damn proud of it **:D**
 
@@ -174,14 +174,14 @@ Sounds to me like a great plan to really get a firm grasp on what is going on,
 while having fun, and advancing step by step, not to mention improvements in
 writing good modular code, network programming, shellcode generation, etc...  
 Also if you want to step-up your tooling, you can write them in another langage,
-like Go (check the book [Black hat Go](bhgo)) or even Rust (check the book
-[Black hat Rust](bhrust)).
+like Go (check the book [Black hat Go][bhgo]) or even Rust (check the book
+[Black hat Rust][bhrust]).
 
 I'd say the Offensive Security motto **"Try harder"** should be replaced by
 **"Try easier, spice up later"**
 
 [blackhatpython]: https://nostarch.com/black-hat-python2E
-[httpproxy]: https://github.com/litchipi/tcp_proxy
+[httpproxy]: https://github.com/litchipi/http_proxy
 [fartcode]: https://github.com/litchipi/fart
 [bhgo]: https://nostarch.com/blackhatgo
 [bhrust]: https://kerkour.com/black-hat-rust
