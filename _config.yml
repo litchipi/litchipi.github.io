@@ -1,5 +1,5 @@
 title: Blog of Litchi Pi
-email: litchi.pi@protonmail.com
+email: litchi.pi@proton.me
 description: >- # this means to ignore newlines until "baseurl:"
     Just writing about Rust stuff, Python automation, random tech subjects,
     and anything related to the world, virtual or not, dreamt or real.
@@ -8,7 +8,7 @@ domain: "litchipi.github.io"
 url: "https://litchipi.github.io"
 author:
     name: "Litchi pi"
-    email: "litchi.pi@protonmail.com"
+    email: "litchi.pi@proton.me"
     github: "https://github.com/litchipi/"
     twitter: "https://twitter.com/LitchiPi"
 twitter_username: LitchiPi
