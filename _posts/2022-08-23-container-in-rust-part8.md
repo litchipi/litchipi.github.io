@@ -2,7 +2,7 @@
 layout: post
 title:  "Executing the binary"
 date:   2022-08-23 11:43:05 +0200
-categories: rust
+categories: rust_container_tutorial
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 8

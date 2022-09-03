@@ -2,7 +2,7 @@
 layout: post
 title:  "Birth of a child process"
 date:   2021-11-12 9:55:00 +0200
-categories: rust
+categories: rust_container_tutorial
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 4

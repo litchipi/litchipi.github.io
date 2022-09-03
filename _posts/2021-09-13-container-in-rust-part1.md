@@ -3,7 +3,7 @@ layout: post
 title:  "Introduction to containers"
 date:   2021-09-20 10:42:34 +0200
 modified_date: 2022-03-09 12:24:52 +0200
-categories: rust
+categories: rust_container_tutorial
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 1

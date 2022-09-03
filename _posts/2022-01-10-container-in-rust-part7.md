@@ -2,7 +2,7 @@
 layout: post
 title:  "Syscalls and resources restriction"
 date:   2022-03-10 07:48:30 +0200
-categories: rust
+categories: rust_container_tutorial
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 7

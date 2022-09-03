@@ -2,7 +2,7 @@
 layout: post
 title:  "Creating the skeletton"
 date:   2021-10-3 18:17:55 +0200
-categories: rust
+categories: rust_container_tutorial
 tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 3
