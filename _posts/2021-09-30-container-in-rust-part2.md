@@ -258,7 +258,7 @@ As a general practise it's good to take care of handling errors.
 When it comes to Rust, this langage is far too powerfull concerning errors handling to ignore
 them and not exploit them.
 
-I am no-one to teach how to properly handle errors, but this part will give an exemple of how
+I am no-one to teach how to properly handle errors, but this part will give an example of how
 errors can be managed in a large Rust project, and use Rust specific tools to handle them more
 easily.
 
