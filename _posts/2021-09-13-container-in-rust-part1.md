@@ -55,7 +55,7 @@ manager create a box that will look like a system in which the container can exe
 (properly configured), and execute the software.
 
 ### Usages
-Containerisation is used a lot of servers, as it allows great flexibility and reliability
+Containerisation is used by a lot of servers, as it allows great flexibility and reliability
 for DevOps engineers. Also if a software crashes, takes 100% of its resources available,
 or even gets compromised by a hacker, it wont hurt the whole system and all the other
 services who are running on it.
@@ -106,7 +106,7 @@ avoid virtual machine evasion), a great post about it is
 
 ## Naive representation of containerisation
 ![Do not trust this image](/assets/images/container_in_rust_part1/system_virtualmachine_container.png)
-Okay this representation is false for a lot of reasons, but intuitively this is the different
+Okay this representation is false for a lot of reasons, but intuitively there are different
 ways for a system to achieve the *portability* and *isolation* features.
 In reality, the CPU / SoC hardware have features to ease virtualization, but also the software
 stack under and inside the Linux kernel, but I won't dive into these details here.
@@ -139,7 +139,7 @@ but we're going to inspect the 2 most famous one, **Docker** and **LXC**.
 A more complete list of containers can be found on [Wikipedia][list-linux-containers].
 
 ## Docker
-The most used container, released as open-source in 2013, it is one of the fondamental tools used by
+The most used container, released as open-source in 2013, it is one of the fundamental tools used by
 DevOps nowadays when it comes to microservices and cloud computing.
 
 One key feature it allows is to create containers in a form of a single image you can store and/or
