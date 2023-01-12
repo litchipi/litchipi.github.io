@@ -46,7 +46,7 @@
     # The build environment
     env = pkgs.bundlerEnv {
       name = "blog";
-      ruby = pkgs.ruby_3_1;
+      ruby = pkgs.ruby;
       gemdir = ./.;
     };
 
@@ -69,12 +69,12 @@
       # nix run -> serves the website locally
       default = simple_script "serve_blog" [] ''
         echo "Bundler env: ${env}"
-        ${env}/bin/bundler exec ${env}/bin/jekyll serve --trace
+        ${env}/bin/bundler exec -- jekyll serve --trace
       '';
 
       # nix run .#generate -> Re-generate the gemfile, lockfile, build environment and gemset.nix
       #   To use only if added a dependency, bumped a version, etc ...
-      generate = simple_script "generate_blog_env" [ pkgs.bundix pkgs.zlib pkgs.libiconv ] ''
+      generate = simple_script "generate_blog_env" [ pkgs.bundix ] ''
         set -e
 
         rm -f gemset.nix Gemfile Gemfile.lock .bundle/config
@@ -82,17 +82,15 @@
         ${generate_gemfile}
         EOF
 
-        export BUNDLE_CACHE_ALL=true
         export BUNDLE_PATH=vendor
+        export BUNDLE_CACHE_ALL=true
         export BUNDLE_NO_INSTALL=true
-        export BUNDLE_SPECIFIC_PLATFORM="${system}"
-        export BUNDLE_CACHE_ALL_PLATFORMS=true
-        export BUNDLE_FORCE_RUBY_PLATFORM="${system}"
+        export BUNDLE_FORCE_RUBY_PLATFORM=true
 
         bundler update
         bundler lock
         bundler package
-        BUNDLE_FORCE_RUBY_PLATFORM=true bundix --magic -d -l
+        bundix --magic
         rm -rf vendor
       '';
     };
