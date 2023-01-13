@@ -3,8 +3,6 @@ layout: post
 title:  "Starting the project"
 date:   2021-09-30 15:50:35 +0200
 modified_date: 2022-08-24 23:17:22 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 2
 serie_url: /series/container_in_rust
@@ -384,11 +382,11 @@ In case there was an error, we log it (notice the `{}` format on our `Errcode` t
 call the `fmt` function of the `Display` trait we implemented earlier), and simply exit with the
 return code associated.
 
-One final step, we have to set `src/errors.rs` as a module of our project, and import the 
+One final step, we have to set `src/errors.rs` as a module of our project, and import the
 `exit_with_retcode` function in our `src/main.rs` file.
 ``` rust
 mod errors;
- 
+
 use errors::exit_with_retcode;
 ```
 

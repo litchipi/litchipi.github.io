@@ -6,11 +6,11 @@ layout: base
 <ul class="post_series_list">
 {% assign site_posts = site.posts | sort:"serie_index" %}
 {% for post in site_posts %}
-	{% if post.series == page.series %}
-	<li>
-		<span class="post_serie_index"> {{ post.serie_index }} </span>
-		<a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
-	</li>
-	{% endif %}
+    {% if post.series == page.series %}
+    <li>
+        <span class="post_serie_index"> {{ post.serie_index }} </span>
+        <a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
+    </li>
+    {% endif %}
 {% endfor %}
 </ul>

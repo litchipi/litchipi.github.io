@@ -2,8 +2,6 @@
 layout: post
 title:  "Creating the skeletton"
 date:   2021-10-3 18:17:55 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 3
 serie_url: /series/container_in_rust
@@ -60,7 +58,7 @@ impl ContainerOpts{
         let argv: Vec<CString> = command.split_ascii_whitespace()
             .map(|s| CString::new(s).expect("Cannot read arg")).collect();
         let path = argv[0].clone();
- 
+
         Ok(
             ContainerOpts {
                 path,
@@ -212,7 +210,7 @@ From these informations, we get the kernel version as a `f32` float using the [s
 and check if it's at least the `v4.8`, then check if the machine architecture is `x86_64`.
 
 ## Handle errors
-If the kernel version is too low or we have a wrong architecture, the function returns a 
+If the kernel version is too low or we have a wrong architecture, the function returns a
 `Errcode::NotSupported`, with a number indicating what was not supported. \\
 If the scan_fmt fails, we return a `Errcode::ContainerError`, a new error type for the
 "not supposed to happend at all" kind of errors, in our container.
@@ -240,7 +238,7 @@ nix = "0.22.1"
 scan_fmt = "0.2.6"
 ```
 
-Finally, let's insert the `check_linux_version` function into the flow of our `start` function in 
+Finally, let's insert the `check_linux_version` function into the flow of our `start` function in
 `src/container.rs`:
 ``` rust
 pub fn start(args: Args) -> Result<(), Errcode> {

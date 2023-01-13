@@ -2,8 +2,6 @@
 layout: post
 title:  "Birth of a child process"
 date:   2021-11-12 9:55:00 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 4
 serie_url: /series/container_in_rust
@@ -68,7 +66,7 @@ the [standard Unix way of creating socket pairs][man-socketpair], but called fro
 
 - `None`: The socket will use the default protocol associated with the socket type.
 
-- `SockFlag::SOCK_CLOEXEC`: The socket will be automatically closed after any syscall of the 
+- `SockFlag::SOCK_CLOEXEC`: The socket will be automatically closed after any syscall of the
 `exec` family. (see [Linux manual for `exec` syscalls][man-exec])
 
 As we use a new `Errcode::SocketError` variant, let's add it to `src/errors.rs` now:
@@ -129,7 +127,7 @@ pub struct Container{
     sockets: (RawFd, RawFd),
     config: ContainerOpts,
  }
- 
+
 impl Container {
     pub fn new(args: Args) -> Result<Container, Errcode> {
         let (config, sockets) = ContainerOpts::new(
@@ -333,7 +331,7 @@ namespaces. \\
 *Check [the network-namespaces manual][man-networkns] for more informations*
 
 - `CLONE_NEWUTS` will start the cloned child in a new `uts` namespace. \\
-I cannot explain why the name UTS (*UTS stands for UNIX Timesharing System*), 
+I cannot explain why the name UTS (*UTS stands for UNIX Timesharing System*),
 but it will allow the contained process to set its own hostname and NIS domain name
 in the namespace. \\
 *Check [the uts-namespaces manual][man-utsns] for more informations*

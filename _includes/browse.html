@@ -1,0 +1,22 @@
+<div class="home-side-browse">
+    <div class="categories-browser">
+        <h2>Browse by category</h2>
+        {% assign categories = site.posts | map: 'categories' | uniq | sort %}
+        {% for cat in categories %}
+        <div class="sitenav"><a href="{{ site.url }}/category/{{ cat }}.html">{{ cat | capitalize }}</a></div>
+        {% endfor %}
+    </div>
+
+    <div class="series-browser">
+        <h2>Browse by series</h2>
+        {% assign series = site.posts | group_by: 'series' %}
+        {% for serie in (series | sort) %}
+            {% if serie.name != "" %}
+                <div class="sitenav">
+                    {% assign url = serie.items | map: 'serie_url' | first %}
+                    <a href="{{ site.url }}{{ url }}.html">{{ serie.name }}</a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

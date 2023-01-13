@@ -2,8 +2,6 @@
 layout: post
 title:  "Executing the binary"
 date:   2022-08-23 11:43:05 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 8
 serie_url: /series/container_in_rust
@@ -81,7 +79,7 @@ The implementation was straightforward, let's test this out :
 $ mkdir -p ./mountdir/bin
 $ cp /bin/bash ./mountdir/bin
 $ cargo build
-# ... 
+# ...
 $ sudo target/debug/crabcan --debug -u 0 -m ./mountdir -c "/bin/bash"
 [2022-08-23T08:37:01Z INFO  crabcan] Args { debug: false, command: "/bin/bash", uid: 0, mount_dir: "./mountdir/" }
 [2022-08-23T08:37:01Z INFO  crabcan::namespaces] User namespaces set up
@@ -211,7 +209,7 @@ pub struct Args {
 ```
 
 These arguments will be used to have a pair of `from_dir -> to_dir`, and pass
-them to the container configuration.  
+them to the container configuration.
 In `src/container.rs`:
 
 ``` rust
@@ -266,7 +264,7 @@ impl ContainerOpts{
 ```
 
 Then, they are passed as an additionnal argument of the `setmountpoint` function
-and used to create the mountpoint and perform the `mount` operation.  
+and used to create the mountpoint and perform the `mount` operation.
 In the file `src/mounts.rs`:
 
 ``` rust

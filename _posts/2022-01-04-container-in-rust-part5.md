@@ -2,8 +2,6 @@
 layout: post
 title:  "Defining the container environment"
 date:   2022-01-04 08:01:40 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 5
 serie_url: /series/container_in_rust
@@ -17,7 +15,7 @@ our hostname in the local network, allowing a command `ssh crab@192.168.0.42` to
 `ssh crab@crabcan.local`, the website `http://localhost:80` to `http://crabcan.local`, etc ...
 > Check [the official website of avahi](http://avahi.org/) for more informations
 
-In order to differentiate the operations performed by our software contained from the one 
+In order to differentiate the operations performed by our software contained from the one
 performed by the host system, we will modify its hostname.
 
 ## Generate a hostname
@@ -269,7 +267,7 @@ pub fn clean_mounts(_rootpath: &PathBuf) -> Result<(), Errcode>{
 }
 ```
 
-We want to remount the root `/` of our filesystem with the `MS_PRIVATE` flag which will 
+We want to remount the root `/` of our filesystem with the `MS_PRIVATE` flag which will
 prevent any mount operation to be propagated.
 
 > See [this LWN article](https://lwn.net/Articles/689856/) for more explanations on what the
@@ -462,7 +460,7 @@ pub fn setmountpoint(mount_dir: &PathBuf) -> Result<(), Errcode> {
 }
 ```
 
-> **Note**: We 
+> **Note**: We
 umount and delete the `/oldroot.<random_letters>` directory as it was located
 inside the `/tmp/crabcan.<random_letters>` directory which became our new `/`.
 

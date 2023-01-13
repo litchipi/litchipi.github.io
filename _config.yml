@@ -22,18 +22,22 @@ kramdown:
 theme: jekyll-theme-hacker
 plugins:
   - jekyll-feed
+  - jekyll-archives
+
+jekyll-archives:
+  enabled:
+    - categories
+  layouts:
+    category: categories
+  permalinks:
+    category: '/category/:name.html'
 
 exclude:
     - _posts/2021-09-13-helloworld*
     - _posts/2021-09-13-test*
-
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+    - flake.lock
+    - Gemfile*
+    - flake*
+    - gemset.nix
+    - post_ideas
+    - serve.sh

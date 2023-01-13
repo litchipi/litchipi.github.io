@@ -3,8 +3,6 @@ layout: post
 title:  "User namespaces and Linux Capabilties"
 date:   2022-01-06 09:40:00 +0200
 modified_date: 2022-08-23 9:01:22 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 6
 serie_url: /series/container_in_rust

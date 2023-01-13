@@ -3,8 +3,13 @@
   {%- include head.html -%}
   <body>
     {%- include header.html -%}
+
+    {% if page.title != "Index" %}
 	{%- include navigation.html -%}
 	{%- include mobile-navigation.html -%}
+    {% else %}
+        {%- include browse.html -%}
+    {% endif %}
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
         {{ content }}

@@ -2,8 +2,6 @@
 layout: post
 title:  "Syscalls and resources restriction"
 date:   2022-03-10 07:48:30 +0200
-categories: rust_container_tutorial
-tags: rust tutorial learning container docker
 series: Writing a container in Rust
 serie_index: 7
 serie_url: /series/container_in_rust
@@ -233,7 +231,7 @@ populate the profile.
 use crate::syscallz::Syscall;
 
 pub fn setsyscalls() -> Result<(), Errcode> {
-    // ... 
+    // ...
     // Unconditionnal syscall deny
     let syscalls_refused = [
         Syscall::keyctl,
@@ -246,7 +244,7 @@ pub fn setsyscalls() -> Result<(), Errcode> {
         Syscall::userfaultfd,
         Syscall::perf_event_open,
     ];
-    
+
     if let Ok(mut ctx) = Context::init_with_action(Action::Allow){
         // ...
 
@@ -285,7 +283,7 @@ What this `Comparator` will do is to take the argument number **ind** passed to 
 and compare it using the mask `biteq` to the value `biteq`. \\
 This is equivalent to testing if the bit `biteq` is set.
 
-Let's add all the rules we want to set for our syscalls: 
+Let's add all the rules we want to set for our syscalls:
 
 ``` rust
 use libc::TIOCSTI;
@@ -673,7 +671,7 @@ The raw patch to apply on the previous step can be found [here][patch-step14]
 [code-step14]: https://github.com/litchipi/crabcan/tree/step14/
 [patch-step14]: https://github.com/litchipi/crabcan/commit/step14.diff
 
-[origtuto_syscalls]: https://blog.lizzie.io/linux-containers-in-500-loc.html#org8504d16 
+[origtuto_syscalls]: https://blog.lizzie.io/linux-containers-in-500-loc.html#org8504d16
 [cgroups-vuln]: https://thehackernews.com/2022/03/new-linux-kernel-cgroups-vulnerability.html
 [wikipedia_seccomp]: https://en.wikipedia.org/wiki/Seccomp
 [windows_98_fail]: https://youtu.be/yeUyxjLhAxU

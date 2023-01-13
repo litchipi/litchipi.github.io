@@ -241,6 +241,17 @@
     };
     version = "3.9.2";
   };
+  jekyll-archives = {
+    dependencies = ["jekyll"];
+    groups = ["jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0c2rks7xf6ajp18h4f4wmmbqm5ljprv70bqcz2sabi17zncmz9n0";
+      type = "gem";
+    };
+    version = "2.2.1";
+  };
   jekyll-avatar = {
     dependencies = ["jekyll"];
     groups = ["default" "jekyll_plugins"];
@@ -725,10 +736,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0n79k78c5vdcyl0m3y3l5x9kxl6xf5lgriwi2vd665qmdkr01vnk";
+      sha256 = "1fqld4wnamj7awdr1lwdifpylqdrrg5adm8xj2jl9sc5ms3nxjjm";
       type = "gem";
     };
-    version = "1.13.10";
+    version = "1.14.0";
   };
   octokit = {
     dependencies = ["faraday" "sawyer"];
