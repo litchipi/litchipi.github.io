@@ -1,3 +1,11 @@
+.catnav {
+    h3 {
+        color: $color2;
+        font-weight: bolder;
+        font-size: 20px;
+    }
+}
+
 .sidenav {
   max-height: 600px;
   border: 1px solid $color1;
