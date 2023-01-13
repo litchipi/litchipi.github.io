@@ -1,6 +1,6 @@
 ---
 layout: post
-date:   2023-01-11 17:17:04 +0200
+date:   2023-01-13 17:46:55 +0200
 categories: nix
 tags: nix web
 title:  "Building web applications with Nix easily"
@@ -8,16 +8,15 @@ title:  "Building web applications with Nix easily"
 
 ## Introduction
 
-In this post I will present a little Nix library made to build web applications
-the proper way.
+In this post I will present a little Nix library I made to build web applications
+easily using Nix. The skeletton is there but there is still a lot of work
+to do to make it really practical, and the purpose of that blog post is to
+present what this library does, and is a **call for contributions** as
+I really need those to make the library grow. (See the *last section* of this post)
 
-The idea is to **always** keep it simple for the developper and have a nice API,
-but still do the job.
-
-As this is a first step only, and only tailored to my personnal needs,
-for now it's limited. \\
-The whole purpose of this project is *to gather contributions* for as many
-backends and frontends possibilities as possible.
+The main idea is to **always** keep it simple for the developper and have a *nice
+API*, allow the user to have a *readable* nix code,
+and allow devs to rely on *tested and factorized* code when building their web applications.
 
 Throughout the presentation, I will assume that you are using **nix flakes** and
 that the library is added to the inputs like so:
@@ -146,17 +145,55 @@ to contribute to implement much more frameworks !
 Of course, you still have all the original ways to contribute, open an issue,
 fork the repo, propose a PR, etc ...
 
-But the repo is also made to *have examples of backends / frontends / database*,
-and their associated flake to build them ! So if you want the library to add support
-for another backend, or even one of the many Javascript framework for frontends,
-you simply have to **add an example project**.
+### Feed me examples
 
-Then, you describe in the `README.md` how the
-thing is supposed to be built *using the native tools* ! \\
-From that, it'll be easier for me or any other contributor to take on the example
-project and modify the library so it will work properly. \\
-**No nix knowledge required**
+The idea of [the Github repository][githublink] is to gather contributions to
+this particular form:
 
-Of course, in case of, you can contact me
+#### Create a PR
+A contributor creates a PR, adding *an example* to the repository. \\
+For now the PR only adds:
+
+- A source code stored in `examples/{type}/{langage}/{framework}/`
+- A `README.md` file that explains how to build this code **using native tools**
+
+This is the main part of the contribution, and **does not require any Nix knowledge**.
+
+#### Bind the new example to the CI
+
+Essentially, we only have to add a line in the `examples/flake.nix` file, calling
+the library to build the thing.
+
+This flake has a `build_all` app that will be triggered by the CI to build all the
+examples using Nix.
+
+#### Implement the building process in the library
+
+It can be done by anyone, including me, and the objective is to get a green CI,
+then merge.
+
+### An example is worth a thousand words
+
+Not only that it's a practical way to improve the library incrementally,
+but it also serves the purpose to show examples of how to use the library in all
+kind of situations possible.
+
+In case one special setup breaks the build system and requires a fix,
+we can also make an example for it, serving as a regression test, a piece of
+documentation for anyone wanting to get to this very special case, etc ...
+
+## Closing thoughts
+
+I like how some projects ease the way to build some programming langages using Nix,
+but sometimes it needs to be *scoped down* to a more precise application in order
+to have something more efficient. I attempt to create a way to improve the build
+of all kinds of web-related software using Nix.
+
+So if you think this is worth *some minutes* of your time, please come to the
+[github repository][githublink] and create a PR to add an example for your
+favourite framework, or share ideas on how to make it better.
+
+Of course, in case of, you can also contact me directly
 
 [buildreactdiscourse]: https://discourse.nixos.org/t/how-to-use-nix-to-build-a-create-react-app-project/5200/10
+[githublink]: https://github.com/litchipi/nix_web_lib
