@@ -2,7 +2,7 @@
 layout: post
 date:   2023-01-11 17:17:04 +0200
 categories: nix
-tags: rust nix web react vue
+tags: nix web
 title:  "Building web applications with Nix easily"
 ---
 
@@ -54,14 +54,20 @@ How to start the backend is up to the developper using the lib, and he'll be
 able to pass whatever argument and environment variables he wants on this*.
 
 As of today, **only Rust backend** is implemented (tested with `actix-web` framework)
-and builds like so:
+using [cargo2nix](https://github.com/cargo2nix/cargo2nix)
+so you need a `Cargo.nix` file inside the source directory. \\
+It builds like so:
 
 ``` nix
 backend = weblib.backend.rust.build {
     src = ./backend;
-    cargo2nix_file = ./backend/Cargo.nix;
-    rustChannel = "stable";
-    rustVersion = "1.61.0";
+    bin_name = "my_binary_name";      # Default binary name is "backend"
+
+    # Any argument to pass to "pkgs.rustBuilder.makePackageSet" function
+    rustBuilderArgs = {
+        rustChannel = "stable";
+        rustVersion = "1.61.0";
+    };
 };
 ```
 
@@ -134,6 +140,23 @@ in ''
 
 ## How can you contribute
 
-Like this
+For now, the usage of this library is very limited, however it is fairly easy
+to contribute to implement much more frameworks !
+
+Of course, you still have all the original ways to contribute, open an issue,
+fork the repo, propose a PR, etc ...
+
+But the repo is also made to *have examples of backends / frontends / database*,
+and their associated flake to build them ! So if you want the library to add support
+for another backend, or even one of the many Javascript framework for frontends,
+you simply have to **add an example project**.
+
+Then, you describe in the `README.md` how the
+thing is supposed to be built *using the native tools* ! \\
+From that, it'll be easier for me or any other contributor to take on the example
+project and modify the library so it will work properly. \\
+**No nix knowledge required**
+
+Of course, in case of, you can contact me
 
 [buildreactdiscourse]: https://discourse.nixos.org/t/how-to-use-nix-to-build-a-create-react-app-project/5200/10
