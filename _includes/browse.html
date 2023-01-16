@@ -3,7 +3,7 @@
         <h2>Browse by category</h2>
         {% assign categories = site.posts | map: 'categories' | uniq | sort %}
         {% for cat in categories %}
-        <div class="sitenav"><a href="{{ site.url }}/category/{{ cat }}.html">{{ cat | capitalize }}</a></div>
+        <div class="sitenav"><a href="{{ site.url }}/category/{{ cat }}">{{ cat | capitalize }}</a></div>
         {% endfor %}
     </div>
 

@@ -22,16 +22,16 @@ kramdown:
 theme: jekyll-theme-hacker
 plugins:
   - jekyll-feed
-  - jekyll-archives
-  - jekyll-minifier
+  - jekyll-avatar
 
-jekyll-archives:
-  enabled:
-    - categories
-  layouts:
-    category: categories
-  permalinks:
-    category: '/category/:name.html'
+# Forbidden by Github Pages
+# jekyll-archives:
+#   enabled:
+#     - categories
+#   layouts:
+#     category: categories
+#   permalinks:
+#     category: '/category/:name.html'
 
 exclude:
     - _posts/2021-09-13-helloworld*
@@ -42,3 +42,5 @@ exclude:
     - gemset.nix
     - post_ideas
     - serve.sh
+    - LICENSE
+    - notes

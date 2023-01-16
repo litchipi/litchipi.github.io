@@ -1,58 +1,58 @@
 <!-- TODO	Fix the conditions on the navigation bar !-->
-{% if page.title != "Index" %}
+{%- if page.title != "Index" -%}
 <div class="sidenav">
 	<div class="sitenav"><a href="/">Index</a></div>
-	{% assign site_posts = site.posts | sort:"serie_index" %}
-	{% if page.serie_url %}
+	{%- assign site_posts = site.posts | sort:"serie_index" -%}
+	{%- if page.serie_url -%}
 	<p><a class="sidenav_seriename" href="{{ site.url }}{{ page.serie_url }}"> {{ page.series }} </a>
-		{%- for post in site_posts %}
-			{% if post.series == page.series %}
+		{%- for post in site_posts -%}
+			{%- if post.series == page.series -%}
 				<a class="post_same_serie"
-					{% if post.url == page.url %}
+					{%- if post.url == page.url -%}
 						id="current_post"
-					{% endif %}
+					{%- endif -%}
 					href="{{ site.url }}{{ post.url }}">
-					{% if post.url == page.url %}
+					{%- if post.url == page.url -%}
 						<i class="arrow right"></i>
-					{% endif %}
+					{%- endif -%}
 					{{ post.title }}</a>
-			{% endif %}
-		{% endfor %}
+			{%- endif -%}
+		{%- endfor -%}
 	</p>
 	{%- endif -%}
 
             <div class="catnav">
-            {% assign maxRelated = 4 %}
-            {% assign maxRelatedCounter = 0 %}
-            {% assign writeHeader = true %}
+            {%- assign maxRelated = 4 -%}
+            {%- assign maxRelatedCounter = 0 -%}
+            {%- assign writeHeader = true -%}
 
-            {% for post in site.posts %}
-                {% if page.series  %}
-                    {% break %}
-                {% endif %}
+            {%- for post in site.posts -%}
+                {%- if page.series  -%}
+                    {%- break -%}
+                {%- endif -%}
 
-                {% if post.title == page.title %}
-                    {% continue %}
-                {% endif %}
+                {%- if post.title == page.title -%}
+                    {%- continue -%}
+                {%- endif -%}
 
-                {% for tag in page.tags %}
-                    {% if post.tags contains tag %}
-                      {% if writeHeader == true %}
+                {%- for tag in page.tags -%}
+                    {%- if post.tags contains tag -%}
+                      {%- if writeHeader == true -%}
                             <p><h3> Related posts </h3>
-                            {% assign writeHeader = false %}
-                      {% endif %}
+                            {%- assign writeHeader = false -%}
+                      {%- endif -%}
                       <a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
-                      {% assign maxRelatedCounter = maxRelatedCounter | plus: 1 %}
-                      {% if maxRelatedCounter >= maxRelated %}
-                              {% break %}
-                      {% endif %}
-                    {% endif %}
-                {% endfor %}
+                      {%- assign maxRelatedCounter = maxRelatedCounter | plus: 1 -%}
+                      {%- if maxRelatedCounter >= maxRelated -%}
+                              {%- break -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                {%- endfor -%}
 
-                {% if maxRelatedCounter >= maxRelated %}
-                        {% break %}
-                {% endif %}
-            {% endfor %}
+                {%- if maxRelatedCounter >= maxRelated -%}
+                        {%- break -%}
+                {%- endif -%}
+            {%- endfor -%}
             </div>
 </div>
-{% endif %}
+{%- endif -%}

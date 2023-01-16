@@ -4,9 +4,10 @@ layout: base
 {%- include inside_post_navigation.html -%}
 <div class="post-header">
     <p class="post-meta">
-      
+
 		{%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
 
+    <div>
       <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
         &nbsp Published: {{ page.date | date: date_format }} &nbsp
       </time>
@@ -19,9 +20,15 @@ layout: base
         </time>
 		 &nbsp
       {%- endif -%}
+    </div>
 
 	  {%- assign post_author = page.author | default: site.author.name -%}
-	   &nbsp by <span class="author_name">{% for author in post_author %} {{ author }}</span> &nbsp
+	    &nbsp
+            <div>
+               <span class="author_avatar"> {% avatar litchipi %} </span>
+               by <span class="author_name">{% for author in post_author %} {{ author }}</span>
+            </div>
+            &nbsp
         {%- if forloop.last == false %}, {% endif -%}
         {% endfor %}
 	</p>

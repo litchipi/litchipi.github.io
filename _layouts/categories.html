@@ -4,10 +4,10 @@ layout: base
 
 <h1>{{ page.title | capitalize }}</h1>
 <ul class="post_series_list">
-    {% assign posts = site.posts | where: "categories", page.name %}
-    {% for post in posts %}
+    {%- assign posts = site.posts | where: "categories", page.category -%}
+    {%- for post in posts -%}
         <li>
             <a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
         </li>
-    {% endfor %}
+    {%- endfor -%}
 </ul>

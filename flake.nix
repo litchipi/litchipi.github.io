@@ -17,8 +17,11 @@
 
     inc_plugins = {
       jekyll-feed = "0.12";
-      jekyll-archives = "2.2.1";
-      jekyll-minifier = "0.1.10";
+      jekyll-avatar = "0.7.0";
+
+      # Do not work as Github Pages doesn't allow it
+      # jekyll-archives = "2.2.1";
+      # jekyll-minifier = "0.1.10";
     };
 
     # Generation of the Gemfile
