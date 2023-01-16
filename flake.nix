@@ -18,6 +18,7 @@
     inc_plugins = {
       jekyll-feed = "0.12";
       jekyll-archives = "2.2.1";
+      jekyll-minifier = "0.1.10";
     };
 
     # Generation of the Gemfile

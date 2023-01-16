@@ -72,6 +72,16 @@
     };
     version = "1.1.10";
   };
+  cssminify2 = {
+    groups = ["default" "jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "135r8lg186kr5sldbbfw0jzjkl8ys7vj01gkgg95bz6csk7cy4g3";
+      type = "gem";
+    };
+    version = "2.0.1";
+  };
   dnsruby = {
     dependencies = ["simpleidn"];
     groups = ["default" "jekyll_plugins"];
@@ -208,6 +218,16 @@
       type = "gem";
     };
     version = "2.14.3";
+  };
+  htmlcompressor = {
+    groups = ["default" "jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "17hzzg7alnmalb1xgv1bgw3aj5wczsijhq6c945kymkbsj7cyc26";
+      type = "gem";
+    };
+    version = "0.4.0";
   };
   "http_parser.rb" = {
     groups = ["default" "jekyll_plugins"];
@@ -361,6 +381,17 @@
       type = "gem";
     };
     version = "1.6.0";
+  };
+  jekyll-minifier = {
+    dependencies = ["cssminify2" "htmlcompressor" "jekyll" "json-minify" "uglifier"];
+    groups = ["jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "18rqv7qjz1a9775gafg2f4wdk9xy2w64hz1r8k9xzw8546dvs1fd";
+      type = "gem";
+    };
+    version = "0.1.10";
   };
   jekyll-optional-front-matter = {
     dependencies = ["jekyll"];
@@ -645,6 +676,27 @@
       type = "gem";
     };
     version = "0.12.0";
+  };
+  json = {
+    groups = ["default" "jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0nalhin1gda4v8ybk6lq8f407cgfrj6qzn234yra4ipkmlbfmal6";
+      type = "gem";
+    };
+    version = "2.6.3";
+  };
+  json-minify = {
+    dependencies = ["json"];
+    groups = ["default" "jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "1bh8pzq6j55si9xcmcvgzrc5kaw2awrmf6xg18sc4ckkhs9yyf7x";
+      type = "gem";
+    };
+    version = "0.0.3";
   };
   kramdown = {
     dependencies = ["rexml"];
@@ -940,6 +992,17 @@
       type = "gem";
     };
     version = "1.2.10";
+  };
+  uglifier = {
+    dependencies = ["execjs"];
+    groups = ["default" "jekyll_plugins"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0wgh7bzy68vhv9v68061519dd8samcy8sazzz0w3k8kqpy3g4s5f";
+      type = "gem";
+    };
+    version = "4.2.0";
   };
   unf = {
     dependencies = ["unf_ext"];

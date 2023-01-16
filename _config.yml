@@ -23,6 +23,7 @@ theme: jekyll-theme-hacker
 plugins:
   - jekyll-feed
   - jekyll-archives
+  - jekyll-minifier
 
 jekyll-archives:
   enabled:

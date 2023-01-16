@@ -10,5 +10,6 @@ gem "github-pages", "~> 227", group: :jekyll_plugins
 group :jekyll_plugins do
   gem "jekyll-archives", "~> 2.2.1"
   gem "jekyll-feed", "~> 0.12"
+  gem "jekyll-minifier", "~> 0.1.10"
 end
 
