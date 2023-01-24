@@ -256,22 +256,27 @@ as `usize` is unsigned and neither are `u8 u16 u32 u64`.
 
 I decided to count this as a *protection*, as the amount of work required
 to make this behavior happend assures that you brought it on yourself. \\
-I'm not sure this code really work, but at least it would compile under a
-version of rust with the `vec_into_raw_parts` unstable feature:
+Using `unsafe`, it is possible to get similar problems leading to possible
+vulnerabilities as well, for example in this code:
 
 ``` rust
 let input_string = String::from("this is longer than the length of the buffer");
 let strlen : usize = input_string.len();
+
 let bufflen : usize = 10;
 let buffer = String::with_capacity(bufflen);
+
+let offset : i64 = (bufflen as i64) - (strlen as i64);
+let ptr = buffer.as_mut_ptr();
 unsafe {
-    let offset : i64 = (bufflen as i64) - (strlen as i64);
-    let (ptr, size, cap) = buffer.into_raw_parts();
-    let new_addr : i64 = (ptr as i64) + offset;
-    let mut new_str = String::from_raw_parts(new_addr as *mut u8, size, cap);
-    new_str.push_str(input_string.as_str());
+    std::ptr::copy(input_string.as_ptr(), ptr.offset(offset), input_string.len());
 }
 ```
+
+> Thanks to `u/pluuth` for pointing out the correct unsafe code here,
+> I previously thought it was much more complex to get an issue like this to appear
+> in Rust. I still count it as "protected" because of the mandatory `unsafe` block
+> and the type casts you need to use.
 
 ## GIT-CR-22-07
 
