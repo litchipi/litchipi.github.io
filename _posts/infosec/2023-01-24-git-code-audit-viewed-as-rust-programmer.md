@@ -179,6 +179,10 @@ the time, and even if the memory size of variable is much more simple in
 Rust than in C, `usize` size in memory is arch-dependant
 (as described in the [usize type documentation][usize_type_doc]).
 
+The issue may exist in Rust, but the **memory vulnerability** doesn't (at least
+in safe Rust), attempts to write something and run some code would lead to the
+program termination.
+
 ## GIT-CR-22-04
 
 This vulnerability (described at section *4.1.4*) is a *Synchronous Access
@@ -498,7 +502,9 @@ The report is accessible [here][report_url] and the summary can be seen on
 Once again, if you found anthing that is wrong / oversimplified in this article,
 **please tell me** so I can correct it right away.
 
-> Thanks to `u/Rodrigodd_` for pointing out some things to improve in the article
+> Special thanks to \\
+> `u/Rodrigodd_` for pointing out some things to improve in the article \\
+> `u/Shnatsel` for pointing an imprecision in `GIT-CR-22-03`'s conclusion
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
