@@ -7,12 +7,12 @@ tags: infosec rust
 ---
 
 On January 17th 2023, **X41** and **Gitlab** published a report of the source
-code audit they performed on Git (founded by the **OSTIF** foundation).
+code audit they performed on Git (funded by the **OSTIF** foundation).
 
 This post is based on the (*great*) report available [here][report_url] and aims
 to investigate how Rust mitigates some of the vulnerabilities shown in this report,
 but also to put some light on **what it doesn't** mitigate by itself, and how a programmer
-can address these issues using good practises.
+can address these issues using good practices.
 
 > The role of these kinds of studies are primordial, and the **OSTIF** allows to
 > fund such initiatives. \\
@@ -65,7 +65,7 @@ codebase with an example much more complex, *it may still be occuring*.
 
 Lesson number one: **Rust doesn't protect from casting overflows** if you cast
 naively using `as`. However you can use the `try_into` function for casting
-that will return a `Result<T, T::Error>` triggered if such things happend.
+that will return a `Result<T, T::Error>` triggered if such things happen.
 
 ## GIT-CR-22-02
 
@@ -160,21 +160,21 @@ println!("{}", some_array.capacity());
 Several things on this:
 
 - I am running on a `x86_64` machine, meaning `usize` is the same length as an `u64`,
-so this code does not reproduce what actually happends in this vulnerability.
+so this code does not reproduce what actually happens in this vulnerability.
 - Notice the casts that we are required to do in order to make this compile, *this
 is a hint* that the programmer have to check his bounds.
 - The overflow protection is only on in `debug` mode (and can be set/unset in the
 [compilation profile][cargobook_compilation_profile])
-- This code **cannot be exploited** in safe mode to perform a *memory overflow*,
+- This code **cannot be exploited** in safe code to perform a *memory overflow*,
 because you would have to use a `Vec` here, which has *all the safeguards* to
 not overflow. Arrays are *not possible* here as their size has to be known
 at compile time.
 - The size of each numeric type (except `usize`) *is obvious* to the developper and
 *doesn't change* across platforms, this is by itself a great protection as long
-as we pay attention to the types we use. (`let size: i32` is not a good practise
+as we pay attention to the types we use. (`let size: i32` is not a good practice
 at all.)
 
-This kinds of issues can **definitly happend** in Rust if you use `as` castings all
+This kinds of issues can **definitly happen** in Rust if you use `as` castings all
 the time, and even if the memory size of variable is much more simple in
 Rust than in C, `usize` size in memory is arch-dependant
 (as described in the [usize type documentation][usize_type_doc]).
@@ -214,7 +214,7 @@ This vulnerability (described at section *4.1.5*) is an *Inefficient Regular
 Expression Complexity* ([CWE 1333][cwe_1333]), leading to a possible
 Denial of Service by consumming excessive CPU resources.
 
-This vulnerability happends because somewhere in the code, the user input
+This vulnerability happens because somewhere in the code, the user input
 gets interpreted as a regular expression. \\
 Using this, an attacker can pass a nasty Regexp that cause a denial of
 Service, called *ReDos* in that case.
@@ -256,14 +256,14 @@ Heap overflows may not be as bad as Stack overflows, but they do have
 really nasty exploit possible (see [CTF101 article][ctf101_heap_exploit] about it).
 
 Now would that kind of things be possible in a world covered in (*safe*) Rust ? \\
-We saw that Rust doesn't always protect against numberic types overflow.
+We saw that Rust doesn't always protect against numeric types overflow.
 
 However you would have to choose between different types to use, meaning that
-for this situation to happend, you would have to explicitly write `i64 offset`,
+for this situation to happen, you would have to explicitly write `i64 offset`,
 as `usize` is unsigned and neither are `u8 u16 u32 u64`.
 
 I decided to count this as a *protection*, as the amount of work required
-to make this behavior happend assures that you brought it on yourself. \\
+to make this behavior happen assures that you brought it on yourself. \\
 Using `unsafe`, it is possible to get similar problems leading to possible
 vulnerabilities as well, for example in this code:
 
@@ -292,7 +292,7 @@ This vulnerability (described at section *4.1.7*) is another *Heap-based
 Buffer Overflow* ([CWE 122][cwe_122]), similarly leading in the worst
 case scenario to arbitrary code execution.
 
-This is yet another `int` type overflow when hanlding big inputs
+This is yet another `int` type overflow when handling big inputs
 (displaying how important this is), however this vulnerability is really
 **critical** as now an attacker can commit a malicious `.gitattributes` file
 into a remote repository, and the vulnerability will be triggered to
@@ -363,7 +363,7 @@ the best protection is to **use proper numeric types** to ensure a size doesn't 
 negative, but you should also *learn to notice* the conditions that would make any
 loop go infinite, and check for these conditions.
 
-# Good security practises in Rust code
+# Good security practices in Rust code
 
 Remember that the Rust "safety" is only relative and under particular conditions,
 it's not the same if you are writing for embedded systems, or in the Linux kernel
@@ -387,7 +387,7 @@ total sense when building a software / an application, but it's not a universal
 > thing, and the reality that the kernel side *requires* slightly
 > different rules than user space traditionally does.
 
-Let's review some good practises (generally speaking) in Rust to ensure we don't
+Let's review some good practices (generally speaking) in Rust to ensure we don't
 hit too much errors, or create some vulnerabilities.
 
 ## Casting overflow
@@ -397,7 +397,7 @@ but when you downcast `u64` to `u32`, use `try_into` instead. \\
 If you *are sure* that your `u64` variable is `< u32::MAX`, then
 you can even use `try_into().unwrap()` as that will limit the
 vulnerability to a Denial of Service in the worst case, and will
-be very easy to spot if that ever happend.
+be very easy to spot if that ever happen.
 
 As `usize` size in memory is arch-dependant (see [the docs][usize_type_doc]),
 I advice to use numeric variable types that have a fixed memory space,
@@ -413,7 +413,7 @@ everywhere when you can simply *limit* any input length is `< u8::MAX` ?
 
 Input sanitization is important, and the size of the input is one aspects of it,
 you should never overlook it as it can lead to nasty behaviors.
-You may think that "it will never happend, to have a blog post title larger than
+You may think that "it will never happen, to have a blog post title larger than
 65536 characters", but an attacker *will* think of this case, and **break** your
 code.
 
@@ -435,6 +435,13 @@ or anything similarly esoteric
 If something breaks in an unexpected way, the unsafe parts of the code must become
 primary suspects, so keep it as clear, simple and documented as possible.
 
+If the use of `unsafe` really improves the performances, add some benchmarks in order
+to prove it, and if one day the gap between the `safe` and `unsafe` implementation
+is getting close, consider moving back to the all-safe implementation.
+
+In any case, if you **do** have `unsafe` in your code, *test it extensively*, plug
+your CI to perform the tests before any merge, and make sure all of it is well tested.
+
 ## Limit the scale of your software
 
 - If you *add a data* struct to some `Vec` everytime someone connects to your server,
@@ -443,7 +450,7 @@ this is a resource consumption.
 to your server, this is a ressource consumption.
 
 In both cases (and many other kind of examples), you need to think of
-"What happends if the whole Earth wants to connect to my app ?"
+"What happens if the whole Earth wants to connect to my app ?"
 
 Answer is, your server will crash, or melt. So put in place **some limits** to the
 number of users, or an (inexpensive) waiting queue from which users will be
@@ -468,7 +475,7 @@ Note that most of the protection was not because the vulnerability didn't occur,
 but more because *it's not exploitable*, or at least with less critical impact.
 This is what the rules of Rust concerning memory manipulation protects you from.
 
-However as the issues causing these vulnerabilities can still happend, you can still
+However as the issues causing these vulnerabilities can still happen, you can still
 have vulnerabilities, and *may have critical ones* if you only rely on "Rust is safe".
 
 Rust *in most cases* is memory safe, but not all exploits are about memory exploitation,
@@ -487,7 +494,7 @@ code, the more he *can exploit it badly*.
 
 You may think that it's only meant for big opensource project and that your
 code is OK without all of this, but I think **it's important to train** as these
-"good practises" only become automatic *if repeated* enough. So try to think a
+"good practices" only become automatic *if repeated* enough. So try to think a
 little about security when building the next (blazing fast) GNU tool rewritten
 in Rust, or anything else really. \\
 *Get used* to write secure code *by default*.
@@ -499,12 +506,15 @@ You can make a donation to the OSTIF fund by following [this link][ostif_donatio
 The report is accessible [here][report_url] and the summary can be seen on
 [X41's website][x41_report_summary].
 
-Once again, if you found anthing that is wrong / oversimplified in this article,
+Once again, if you fund anthing that is wrong / oversimplified in this article,
 **please tell me** so I can correct it right away.
 
 > Special thanks to \\
 > `u/Rodrigodd_` for pointing out some things to improve in the article \\
-> `u/Shnatsel` for pointing an imprecision in `GIT-CR-22-03`'s conclusion
+> `u/Shnatsel` for pointing an imprecision in `GIT-CR-22-03`'s conclusion \\
+> `u/milliams` for correcting some typos \\
+> `u/ssokolow` for correcting some typos and grammar mistakes, and details about
+> unsafe benchmarking and testing
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
