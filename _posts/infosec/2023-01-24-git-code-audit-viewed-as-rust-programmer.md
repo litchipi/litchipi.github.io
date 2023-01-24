@@ -49,7 +49,7 @@ suceeded to allocate **2.5GB** of memory using a *30MB* file.
 Let's try to reproduce the same kind of loop in Rust now:
 
 ``` rust
-let mut slen : u64 = (u32::MAX as u64) + 1;
+let mut slen: u64 = (u32::MAX as u64) + 1;
 while slen > 0 {
     let len: u32 = slen as u32;
     println!("Some memory allocation");
@@ -145,21 +145,21 @@ Now let's do something similar in Rust shall we ?
 println!("size of usize: {}", std::mem::size_of::<usize>());
 // size of usize: 8
 
-let msg_a_len : u64 = u64::MAX >> 1;
-let msg_b_len : u64 = u64::MAX >> 1;
+let msg_a_len: u64 = u64::MAX >> 1;
+let msg_b_len: u64 = u64::MAX >> 1;
 assert_eq!(msg_a_len + msg_b_len + 1, u64::MAX);
 
-let new_buffer_len : usize = (msg_a_len as usize) + (msg_b_len as usize) + 3;
+let new_buffer_len: usize = (msg_a_len as usize) + (msg_b_len as usize) + 3;
 // debug compilation:     thread panick here because of integer overflow
 
-let some_array : Vec<u8> = Vec::with_capacity(new_buffer_len);
+let some_array: Vec<u8> = Vec::with_capacity(new_buffer_len);
 println!("{}", some_array.capacity());
 // release compilation:         1
 ```
 
 Several things on this:
 
-- I am running on a `x86` machine, meaning `usize` is the same length as an `u64`,
+- I am running on a `x86_64` machine, meaning `usize` is the same length as an `u64`,
 so this code does not reproduce what actually happends in this vulnerability.
 - Notice the casts that we are required to do in order to make this compile, *this
 is a hint* that the programmer have to check his bounds.
@@ -169,6 +169,10 @@ is a hint* that the programmer have to check his bounds.
 because you would have to use a `Vec` here, which has *all the safeguards* to
 not overflow. Arrays are *not possible* here as their size has to be known
 at compile time.
+- The size of each numeric type (except `usize`) *is obvious* to the developper and
+*doesn't change* across platforms, this is by itself a great protection as long
+as we pay attention to the types we use. (`let size: i32` is not a good practise
+at all.)
 
 This kinds of issues can **definitly happend** in Rust if you use `as` castings all
 the time, and even if the memory size of variable is much more simple in
@@ -261,12 +265,12 @@ vulnerabilities as well, for example in this code:
 
 ``` rust
 let input_string = String::from("this is longer than the length of the buffer");
-let strlen : usize = input_string.len();
+let strlen: usize = input_string.len();
 
-let bufflen : usize = 10;
+let bufflen: usize = 10;
 let buffer = String::with_capacity(bufflen);
 
-let offset : i64 = (bufflen as i64) - (strlen as i64);
+let offset: i64 = (bufflen as i64) - (strlen as i64);
 let ptr = buffer.as_mut_ptr();
 unsafe {
     std::ptr::copy(input_string.as_ptr(), ptr.offset(offset), input_string.len());
@@ -493,6 +497,8 @@ The report is accessible [here][report_url] and the summary can be seen on
 
 Once again, if you found anthing that is wrong / oversimplified in this article,
 **please tell me** so I can correct it right away.
+
+> Thanks to `u/Rodrigodd_` for pointing out some things to improve in the article
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
