@@ -481,7 +481,7 @@ have vulnerabilities, and *may have critical ones* if you only rely on "Rust is 
 Rust *in most cases* is memory safe, but not all exploits are about memory exploitation,
 **nothing** is *always* safe, always **doubt** the security of a software, wether
 you code it or buy it. \\
-In code or in life, apply [Defense in depth][wikipedia_defindepth], know the strenghts
+In code or in life, apply [Defense in depth][wikipedia_defindepth], know the strengths
 and weaknesses of the technology you use, and keep your mind open :-)
 
 ## Writing secure Rust code
@@ -514,7 +514,8 @@ Once again, if you fund anthing that is wrong / oversimplified in this article,
 > `u/Shnatsel` for pointing an imprecision in `GIT-CR-22-03`'s conclusion \\
 > `u/milliams` for correcting some typos \\
 > `u/ssokolow` for correcting some typos and grammar mistakes, and details about
-> unsafe benchmarking and testing
+> unsafe benchmarking and testing \\
+> `@myers` for a correcting a typo \\
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
