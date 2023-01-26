@@ -392,12 +392,17 @@ hit too much errors, or create some vulnerabilities.
 
 ## Casting overflow
 
-If you upcast `u32` to `u64`, you can use the keyword `as`,
-but when you downcast `u64` to `u32`, use `try_into` instead. \\
-If you *are sure* that your `u64` variable is `< u32::MAX`, then
-you can even use `try_into().unwrap()` as that will limit the
-vulnerability to a Denial of Service in the worst case, and will
-be very easy to spot if that ever happen.
+For a quick and dirty cast, `as` is fine, as long as **you are sure** of
+your bounds.
+
+However a *best practice* is to never use it and rely on the `From` and `TryFrom`
+traits. \\
+If you *upcast* `u32` to `u64`, you can use `.into()` as `From<u32>` is
+implemented for `u64`, and when you *downcast* `u64` to `u32`,
+use `.try_into()` instead, it will return an error if you overflow
+the bounds of the integer. \\
+The performance cost for the usage of these is *negligable* / null,
+so you should always use them for a clean and secure code.
 
 As `usize` size in memory is arch-dependant (see [the docs][usize_type_doc]),
 I advice to use numeric variable types that have a fixed memory space,
@@ -516,6 +521,8 @@ Once again, if you fund anthing that is wrong / oversimplified in this article,
 > `u/ssokolow` for correcting some typos and grammar mistakes, and details about
 > unsafe benchmarking and testing \\
 > `@myers` for a correcting a typo \\
+> `@teor2345` for giving a precision on casting, allowing to improve the
+good practices recommendations on casting.
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
