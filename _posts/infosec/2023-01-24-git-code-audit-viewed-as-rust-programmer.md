@@ -522,7 +522,8 @@ Once again, if you find anything that is wrong / oversimplified in this article,
 > unsafe benchmarking and testing \\
 > `@teor2345` for giving a precision on casting, allowing to improve the
 good practices recommendations on casting. \\
-> `@myers`, `@Arriv9l` and `@pepsiman` for a correcting a typo \\
+> `@myers`, `@Arriv9l` for a correcting a typo \\
+> `@pepsiman` for correcting several typos over the whole article \\
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
