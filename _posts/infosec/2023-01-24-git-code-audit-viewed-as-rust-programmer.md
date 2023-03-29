@@ -169,7 +169,7 @@ is a hint* that the programmer have to check his bounds.
 because you would have to use a `Vec` here, which has *all the safeguards* to
 not overflow. Arrays are *not possible* here as their size has to be known
 at compile time.
-- The size of each numeric type (except `usize`) *is obvious* to the developper and
+- The size of each numeric type (except `usize`) *is obvious* to the developer and
 *doesn't change* across platforms, this is by itself a great protection as long
 as we pay attention to the types we use. (`let size: i32` is not a good practice
 at all.)
@@ -198,7 +198,7 @@ send any data), then the connections are kept active in `git`, the resources
 aren't freed, leading to a Denial of Service.
 
 Rust is not really protected by that kinds of things, and it's to the
-attention of the developper to pay attention to *always* put some kind
+attention of the developer to pay attention to *always* put some kind
 of *boundaries* to the connections, wether it is a hard limit of
 simultaneously opened connections, a timeout, etc ...
 
@@ -225,7 +225,7 @@ For the [regex][regex_crate_docs] crate, the reference when dealing with regular
 expressions in Rust, the security is taken seriously and some features at the
 root cause of this kind of problems are simply not implemented. That mean
 that the crate is less powerful than other systems out there, but it is
-a tradeoff that the developpers chose to make.
+a tradeoff that the developers chose to make.
 
 See the "[Untrusted inputs][regex_docs_untrused_inp]" section from the docs
 of the crate for more details
@@ -511,7 +511,7 @@ You can make a donation to the OSTIF fund by following [this link][ostif_donatio
 The report is accessible [here][report_url] and the summary can be seen on
 [X41's website][x41_report_summary].
 
-Once again, if you fund anthing that is wrong / oversimplified in this article,
+Once again, if you find anthing that is wrong / oversimplified in this article,
 **please tell me** so I can correct it right away.
 
 > Special thanks to \\
@@ -520,9 +520,9 @@ Once again, if you fund anthing that is wrong / oversimplified in this article,
 > `u/milliams` for correcting some typos \\
 > `u/ssokolow` for correcting some typos and grammar mistakes, and details about
 > unsafe benchmarking and testing \\
-> `@myers` for a correcting a typo \\
 > `@teor2345` for giving a precision on casting, allowing to improve the
-good practices recommendations on casting.
+good practices recommendations on casting. \\
+> `@myers`, `@Arriv9l` and `@pepsiman` for a correcting a typo \\
 
 [cwe_400]: https://cwe.mitre.org/data/definitions/400.html
 [cwe_125]: https://cwe.mitre.org/data/definitions/125.html
