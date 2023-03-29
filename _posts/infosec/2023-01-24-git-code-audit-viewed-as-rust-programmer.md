@@ -19,21 +19,21 @@ can address these issues using good practices.
 > Please for the sake of great opensource software and computer security
 > **consider [making a donation][ostif_donation]**.
 
-If I say anthing that is wrong / oversimplified, *do tell me please* and I will correct
+If I say anything that is wrong / oversimplified, *do tell me please* and I will correct
 this article in consequence.
 
 # Detailing some vulnerabilities
 
 The explanations are *intentionally kept simple*, please refer to the corresponding
 report section for more informations. \\
-I'll be focusing on the basics (that should prevent me from saying too much
+I'll be focusing on the basics (that should prevent me from saying too many
 wrong statements), and how these issues could be seen in a program made in Rust.
 
 ## GIT-CR-22-01
 
 This vulnerability (described at section *4.1.1*) is an *Uncontrolled Resource
 Consumption* ([CWE 400][cwe_400]), leading to a possible Denial of Service. \\
-The issue is caused by this loop occuring in one of the functions:
+The issue is caused by this loop occurring in one of the functions:
 
 ``` c
 while (slen > 0) {
@@ -61,7 +61,7 @@ This code compiles without any warning and gives you a nice infinite loop
 indeed. \\
 However note the *2 casts* that we are required to perform in order to get to this
 point, it's much *easier to notice* that something may break here, but on a large
-codebase with an example much more complex, *it may still be occuring*.
+codebase with an example much more complex, *it may still be occurring*.
 
 Lesson number one: **Rust doesn't protect from casting overflows** if you cast
 naively using `as`. However you can use the `try_into` function for casting
@@ -199,7 +199,7 @@ aren't freed, leading to a Denial of Service.
 
 Rust is not really protected by that kinds of things, and it's to the
 attention of the developer to pay attention to *always* put some kind
-of *boundaries* to the connections, wether it is a hard limit of
+of *boundaries* to the connections, whether it is a hard limit of
 simultaneously opened connections, a timeout, etc ...
 
 Timeouts can be annoying to set up, but they may really be worth it as there
@@ -484,7 +484,7 @@ However as the issues causing these vulnerabilities can still happen, you can st
 have vulnerabilities, and *may have critical ones* if you only rely on "Rust is safe".
 
 Rust *in most cases* is memory safe, but not all exploits are about memory exploitation,
-**nothing** is *always* safe, always **doubt** the security of a software, wether
+**nothing** is *always* safe, always **doubt** the security of a software, whether
 you code it or buy it. \\
 In code or in life, apply [Defense in depth][wikipedia_defindepth], know the strengths
 and weaknesses of the technology you use, and keep your mind open :-)
@@ -492,7 +492,7 @@ and weaknesses of the technology you use, and keep your mind open :-)
 ## Writing secure Rust code
 
 The bottom line is that **you should be careful** when writing code, especially
-when handling system's inputs (wether it is human or network / disk). \\
+when handling system's inputs (whether it is human or network / disk). \\
 This is where *extensive tests* are useful (parametric tests for example),
 and in general the more the attacker can control an input in the vulnerable
 code, the more he *can exploit it badly*.
@@ -511,7 +511,7 @@ You can make a donation to the OSTIF fund by following [this link][ostif_donatio
 The report is accessible [here][report_url] and the summary can be seen on
 [X41's website][x41_report_summary].
 
-Once again, if you find anthing that is wrong / oversimplified in this article,
+Once again, if you find anything that is wrong / oversimplified in this article,
 **please tell me** so I can correct it right away.
 
 > Special thanks to \\
