@@ -20,3 +20,29 @@
         - Show the differences with big and tiny projects
         - Talk about big artistic projects (statues, big paintings), and how it has to be "mechanical" even if the bottom is artistic
         - Choregraphy, architecture, etc ...
+
+Transcribe tutorials in Rust into blog post:
+  - https://www.youtube.com/watch?v=DpnXaNkM9_M
+  - https://www.youtube.com/watch?v=cp3tnlTZ9IU
+
+- Build your own virus:
+  - Infection mechanism + Payload + Trigger
+  - Do not get detected: Obfuscate yourself + encrypt yourself + act benign
+  - Trigger: lay dormant + take it slow
+  - How to do metamorphosis of a piece of software
+  - How to infect other executables / pieces of software on the system
+  - How to infect others in a network
+  https://www.youtube.com/watch?v=2Ra1CCG8Guo
+
+Create your own luks encryption tool:
+  - Explain how dm-crypt and cryptsetup works with the kernel crypto API, how a mapper works, and what we'll do
+  Build your own by:
+    - Create a filesystem mapper
+    - Mount our own filesystem and use it in a kind-of /dev/mapper
+    - Encrypt the filesystem with `orion` (https://lib.rs/crates/orion) with no-std
+    - Create a kernel module (in Rust) to unlock the partition
+        https://blog.zenika.com/2021/11/22/ecrire-un-module-pour-linux-en-rust/
+    - Nixify the build
+    - Add the kernel module to a NixOS configuration, and boot the config
+      - Add grub configuration, insert the kernel module, load initramfs
+      - Get the password prompt in boot 
