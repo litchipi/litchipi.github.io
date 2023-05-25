@@ -10,8 +10,7 @@ author:
     name: "Litchi pi"
     email: "litchi.pi@proton.me"
     github: "https://github.com/litchipi/"
-    twitter: "https://twitter.com/LitchiPi"
-twitter_username: LitchiPi
+    mastodon: "https://mastodon.social/@litchipi@fosstodon.org"
 github_username:  litchipi
 
 markdown: kramdown
